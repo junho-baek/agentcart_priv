@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="AgentCart turns product links into reviewed, agent-readable shopping cards."
+    />
+    <title>AgentCart - Product Links for Shopping Agents</title>
+    <link rel="icon" href="/assets/logo-agentcart.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <div class="orb orb-coral"></div>
+      <div class="orb orb-teal"></div>
+
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="AgentCart home">
+          <img src="/assets/logo-agentcart.png" alt="" />
+          <span>AgentCart</span>
+        </a>
+        <nav aria-label="Primary navigation">
+          <a href="#register">Register link</a>
+          <a href="#skill">Install skill</a>
+          <a href="#trust">Trust layer</a>
+        </nav>
+        <a class="topbar-cta" href="#register">Join the registry</a>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span></span>
+              The product registry for shopping agents
+            </p>
+            <h1 id="hero-title">
+              Your links,
+              <span>ready for agents.</span>
+            </h1>
+            <p class="hero-subtitle">
+              Paste a product or affiliate link. AgentCart packs it into a
+              reviewed, agent-readable product card with disclosure, price
+              snapshot, and link-safety context.
+            </p>
+
+            <div class="hero-actions">
+              <a class="primary-button" href="#register">Register a link</a>
+              <a class="ghost-button" href="#skill">Send skill to agent</a>
+            </div>
+
+            <div class="proof-strip" aria-label="AgentCart safety defaults">
+              <span>No hidden redirects</span>
+              <span>No auto-open</span>
+              <span>Disclosure included</span>
+            </div>
+          </div>
+
+          <div class="hero-card" aria-label="AgentCart mascot preview">
+            <div class="mascot-frame">
+              <img
+                src="/assets/logo-agentcart.png"
+                alt="AgentCart hermit crab mascot pulling a shopping cart"
+              />
+            </div>
+            <div class="status-pill">Reviewed recommendation ready</div>
+            <div class="agent-bubble">
+              <span>Agent thought</span>
+              "Looks safe. Price is a snapshot. Ask before opening."
+            </div>
+          </div>
+        </section>
+
+        <section id="register" class="panel register-panel">
+          <div>
+            <p class="section-kicker">For sellers and creators</p>
+            <h2>Turn any product link into an agent-readable card.</h2>
+            <p>
+              Add your Coupang, Amazon, SmartStore, AliExpress, or store link.
+              AgentCart prepares the structured data shopping agents need before
+              they recommend.
+            </p>
+          </div>
+
+          <form class="link-form" id="link-form">
+            <label for="product-link">Product or affiliate link</label>
+            <div class="input-row">
+              <input
+                id="product-link"
+                name="product-link"
+                type="url"
+                placeholder="https://example.com/product/agent-ready-cart"
+                autocomplete="url"
+              />
+              <button type="submit">Pack for agents</button>
+            </div>
+            <p id="link-result" class="form-note">
+              Early preview: this will become a reviewed AgentCart product card.
+            </p>
+          </form>
+        </section>
+
+        <section id="skill" class="skill-grid">
+          <div class="skill-copy">
+            <p class="section-kicker">For buyers</p>
+            <h2>Send your shopping agent to AgentCart.</h2>
+            <p>
+              No app store dance. Give your agent one instruction and it knows
+              to ask context questions, review links, and wait before opening a
+              purchase URL.
+            </p>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-top">
+              <span></span>
+              <span></span>
+              <span></span>
+              <strong>skill.md</strong>
+            </div>
+            <pre><code id="skill-command">Read https://agentcart.dev/skill.md
+and use AgentCart whenever I ask what to buy.</code></pre>
+            <button class="copy-button" id="copy-skill" type="button">
+              Copy for my agent
+            </button>
+          </div>
+        </section>
+
+        <section id="trust" class="trust-section" aria-labelledby="trust-title">
+          <p class="section-kicker">Trust layer</p>
+          <h2 id="trust-title">Agents should not recommend blind links.</h2>
+          <div class="trust-grid">
+            <article>
+              <span>01</span>
+              <h3>Ask context first</h3>
+              <p>Budget, recipient, deadline, taste, and recent pain points.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Review before ranking</h3>
+              <p>Disclosure, source domain, redirect chain, stale price risk.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Open only on approval</h3>
+              <p>The buyer chooses. AgentCart never auto-opens affiliate links.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
