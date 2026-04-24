@@ -62,8 +62,12 @@ test("addCard validates and persists a normalized Coupang wallet card", async ()
     const loadedRegistry = await loadRegistry(registryPath);
 
     assert.equal(card.platform, "coupang");
+    assert.deepEqual(card.bestFor, ["남자 선물", "10만원 이하"]);
+    assert.deepEqual(card.notFor, ["초슬림 지갑 선호"]);
     assert.equal(loadedRegistry.cards.length, 1);
     assert.equal(loadedRegistry.cards[0].curator.handle, "wallet_curator");
+    assert.deepEqual(loadedRegistry.cards[0].bestFor, ["남자 선물", "10만원 이하"]);
+    assert.deepEqual(loadedRegistry.cards[0].notFor, ["초슬림 지갑 선호"]);
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }
@@ -76,11 +80,20 @@ test("seedRegistry installs checked-in inventory", async () => {
     const registryPath = registryPathFor(tempDir);
     const registry = await seedRegistry(registryPath);
     const titles = registry.cards.map((card) => card.title);
+    const platforms = new Set(registry.cards.map((card) => card.platform));
+    const riskFlags = new Set(registry.cards.flatMap((card) => card.riskFlags));
     const persistedRegistry = JSON.parse(await readFile(registryPath, "utf8"));
 
     assert.ok(registry.cards.length >= 10);
     assert.ok(titles.includes("블랙 소가죽 반지갑"));
     assert.ok(titles.includes("브라운 슬림 카드지갑"));
+    assert.ok(platforms.has("coupang"));
+    assert.ok(platforms.has("amazon"));
+    assert.ok(platforms.has("aliexpress"));
+    assert.ok(platforms.has("oliveyoung"));
+    assert.ok(platforms.has("direct"));
+    assert.ok(riskFlags.has("delivery_uncertainty"));
+    assert.ok(riskFlags.has("health_claim_sensitive"));
     assert.equal(persistedRegistry.cards.length, registry.cards.length);
   } finally {
     await rm(tempDir, { recursive: true, force: true });
