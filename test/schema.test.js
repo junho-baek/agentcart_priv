@@ -62,7 +62,8 @@ test("validateCard rejects malformed non-empty URLs", () => {
   assert.deepEqual(result.errors, ["valid_url_required"]);
 });
 
-test("slugify preserves Korean syllables", () => {
+test("slugify strips Latin diacritics and preserves Korean syllables", () => {
+  assert.equal(slugify("Café wallet"), "cafe-wallet");
   assert.equal(slugify("온열 목 마사지기"), "온열-목-마사지기");
 });
 

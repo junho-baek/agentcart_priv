@@ -116,7 +116,13 @@ export function slugify(value) {
   return String(value ?? "")
     .trim()
     .toLowerCase()
-    .normalize("NFC")
+    .replace(/[^\u0000-\u007F]/g, (character) => {
+      if (!/\p{Script=Latin}/u.test(character)) {
+        return character;
+      }
+
+      return character.normalize("NFKD");
+    })
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9가-힣]+/g, "-")
     .replace(/^-+|-+$/g, "");
