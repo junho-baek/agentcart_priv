@@ -43,7 +43,7 @@ test("calculateTrustTemperature combines disclosure, context, risk, and helpful 
 
   assert.equal(
     calculateTrustTemperature({ cards, feedbackEvents, verifiedViolationCount: 0 }),
-    88
+    83
   );
 });
 

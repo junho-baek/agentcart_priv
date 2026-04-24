@@ -1,3 +1,13 @@
+const DISCLOSURE_COMPLETE_SCORE = 25;
+const DISCLOSURE_INCOMPLETE_SCORE = 10;
+const CONTEXT_COMPLETE_SCORE = 25;
+const CONTEXT_INCOMPLETE_SCORE = 10;
+const MAX_RISK_SCORE = 20;
+const MAX_FEEDBACK_SCORE = 20;
+const DEFAULT_FEEDBACK_SCORE = 15;
+const VIOLATION_PENALTY = 10;
+const MAX_VIOLATION_PENALTY = 30;
+
 function normalizeHandle(handle) {
   return String(handle ?? "")
     .trim()
@@ -65,22 +75,32 @@ export function calculateTrustTemperature({
 }) {
   const curatorCards = Array.isArray(cards) ? cards : [];
   const feedback = Array.isArray(feedbackEvents) ? feedbackEvents : [];
-  const baselineScore = 5;
   const disclosureScore =
-    curatorCards.length > 0 && curatorCards.every(hasDisclosure) ? 25 : 10;
-  const contextScore = curatorCards.length > 0 && curatorCards.every(hasContext) ? 25 : 10;
+    curatorCards.length > 0 && curatorCards.every(hasDisclosure)
+      ? DISCLOSURE_COMPLETE_SCORE
+      : DISCLOSURE_INCOMPLETE_SCORE;
+  const contextScore =
+    curatorCards.length > 0 && curatorCards.every(hasContext)
+      ? CONTEXT_COMPLETE_SCORE
+      : CONTEXT_INCOMPLETE_SCORE;
   const noRiskCards = curatorCards.filter((card) => normalizeList(card?.riskFlags).length === 0);
   const riskScore =
-    curatorCards.length > 0 ? Math.round((noRiskCards.length / curatorCards.length) * 20) : 0;
+    curatorCards.length > 0
+      ? Math.round((noRiskCards.length / curatorCards.length) * MAX_RISK_SCORE)
+      : 0;
   const feedbackScore =
     feedback.length > 0
-      ? Math.round((feedback.filter((event) => event?.helpful).length / feedback.length) * 20)
-      : 15;
-  const violationPenalty = Math.min(30, Number(verifiedViolationCount) * 10 || 0);
-
-  return clampTemperature(
-    baselineScore + disclosureScore + contextScore + riskScore + feedbackScore - violationPenalty
+      ? Math.round(
+          (feedback.filter((event) => event?.helpful).length / feedback.length) *
+            MAX_FEEDBACK_SCORE
+        )
+      : DEFAULT_FEEDBACK_SCORE;
+  const violationPenalty = Math.min(
+    MAX_VIOLATION_PENALTY,
+    Number(verifiedViolationCount) * VIOLATION_PENALTY || 0
   );
+
+  return clampTemperature(disclosureScore + contextScore + riskScore + feedbackScore - violationPenalty);
 }
 
 export function getCuratorRoom(registry, handle) {

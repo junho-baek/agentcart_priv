@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+
 function compactTimestamp(date) {
   const value = date instanceof Date ? date : new Date(date);
   const pad = (number) => String(number).padStart(2, "0");
@@ -18,9 +20,30 @@ function normalizeHandle(handle) {
     .replace(/^@+/, "");
 }
 
+function parseBoolean(value) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  const normalizedValue = String(value ?? "")
+    .trim()
+    .toLowerCase();
+
+  if (["true", "1", "yes"].includes(normalizedValue)) {
+    return true;
+  }
+
+  if (["false", "0", "no"].includes(normalizedValue)) {
+    return false;
+  }
+
+  return false;
+}
+
 export function createFeedbackEvent(input, now = new Date()) {
   const cardId = String(input?.cardId ?? "").trim();
   const curatorHandle = normalizeHandle(input?.curatorHandle);
+  const timestamp = compactTimestamp(now);
 
   if (!cardId) {
     throw new Error("card_id_required");
@@ -31,12 +54,12 @@ export function createFeedbackEvent(input, now = new Date()) {
   }
 
   return {
-    id: `fb_${cardId}_${compactTimestamp(now)}`,
+    id: input?.id ?? `fb_${cardId}_${timestamp}_${randomUUID()}`,
     cardId,
     curatorHandle,
-    helpful: Boolean(input?.helpful),
-    linkMatchedExpectation: Boolean(input?.linkMatchedExpectation),
-    disclosureWasClear: Boolean(input?.disclosureWasClear),
+    helpful: parseBoolean(input?.helpful),
+    linkMatchedExpectation: parseBoolean(input?.linkMatchedExpectation),
+    disclosureWasClear: parseBoolean(input?.disclosureWasClear),
     comment: String(input?.comment ?? "").trim(),
     createdAt: (now instanceof Date ? now : new Date(now)).toISOString(),
   };
