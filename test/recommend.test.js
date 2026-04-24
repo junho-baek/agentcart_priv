@@ -110,6 +110,34 @@ test("searchCards sorts by score descending then title and returns top three", (
   );
 });
 
+test("searchCards normalizes Korean leather wallet compound queries for shared recall", () => {
+  const cards = [
+    ...fixtureCards(),
+    recommendationCard({
+      title: "브라운 슬림 카드지갑",
+      category: "wallet",
+      originalUrl: "https://www.amazon.com/dp/B0CARDWALLET",
+      priceAmount: 42000,
+      curator: { handle: "wallet_curator" },
+      bestFor: ["슬림 지갑 선호", "카드 위주 수납", "가벼운 생일 선물"],
+      notFor: ["현금 수납 많음"],
+      searchKeywords: ["브라운 카드지갑", "슬림 월렛", "카드 홀더"],
+      curationNote: "주머니에 부담이 적은 카드 중심 지갑",
+      disclosure: "추천 링크에는 커미션이 포함될 수 있습니다.",
+    }),
+  ];
+
+  const results = searchCards("10만원 이하 가죽지갑", cards, {
+    budgetAmount: 100000,
+  });
+
+  assert.equal(results.length, 3);
+  assert.deepEqual(
+    results.map((card) => card.title),
+    ["블랙 소가죽 반지갑", "브라운 슬림 카드지갑", "고가 명품 가죽 장지갑"]
+  );
+});
+
 test("formatRecommendationResponse discloses commission and includes open and curator commands", () => {
   const [wallet] = searchCards("10만원 이하 leather wallet 추천해줘!", fixtureCards(), {
     budgetAmount: 100000,

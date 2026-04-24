@@ -77,10 +77,6 @@ function routeParts(pathname) {
   }
 }
 
-function normalizeSearchQuery(query) {
-  return String(query ?? "").replaceAll("가죽지갑", "가죽 지갑");
-}
-
 export function createServer({ registryPath } = {}) {
   const activeRegistryPath = registryPath ?? registryPathFor();
   let feedbackWriteQueue = Promise.resolve();
@@ -120,7 +116,7 @@ export function createServer({ registryPath } = {}) {
           context.budgetAmount = Number(url.searchParams.get("budget"));
         }
 
-        const cards = searchCards(normalizeSearchQuery(query), registry.cards, context);
+        const cards = searchCards(query, registry.cards, context);
 
         sendJson(response, 200, {
           disclosure: DISCLOSURE,

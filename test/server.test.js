@@ -54,6 +54,8 @@ test("search returns top card wrappers, disclosure, and CLI instructions", async
 
     assert.equal(response.status, 200);
     assert.equal(body.results.length, 3);
+    assert.ok(body.results.some((result) => result.card.title === "블랙 소가죽 반지갑"));
+    assert.ok(body.results.some((result) => result.card.title === "브라운 슬림 카드지갑"));
     assert.ok(body.results[0].card.title);
     assert.match(body.disclosure, /커미션 링크/);
     assert.match(body.responseText, /커미션 링크/);

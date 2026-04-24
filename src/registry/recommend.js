@@ -16,6 +16,7 @@ const TOKEN_SYNONYMS = {
 };
 
 const AFFILIATE_PLATFORMS = new Set(["amazon", "coupang"]);
+const QUERY_COMPOUND_NORMALIZATIONS = new Map([["가죽지갑", "가죽 지갑"]]);
 
 function normalizeArray(value) {
   return Array.isArray(value) ? value : [];
@@ -89,7 +90,13 @@ function normalizeSearchArgs(queryOrCards, cardsOrQuery, context) {
 }
 
 export function tokenize(value) {
-  return String(value ?? "")
+  let normalizedValue = String(value ?? "");
+
+  for (const [compound, replacement] of QUERY_COMPOUND_NORMALIZATIONS) {
+    normalizedValue = normalizedValue.replaceAll(compound, replacement);
+  }
+
+  return normalizedValue
     .toLowerCase()
     .match(/[\p{Letter}\p{Number}]+/gu) ?? [];
 }

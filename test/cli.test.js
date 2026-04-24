@@ -49,11 +49,11 @@ test("help lists registry commands and preserved auth commands", async () => {
   });
 });
 
-test("seed and search return leather wallet demo cards with disclosure", async () => {
+test("seed and search return Korean leather wallet demo cards with disclosure", async () => {
   await withCli(async ({ runCli, stdout, workDir }) => {
     const seedCode = await runCli(["seed"]);
     const registry = await loadRegistry(registryPathFor(workDir));
-    const searchCode = await runCli(["search", "10만원 이하 leather wallet", "--budget", "100000"]);
+    const searchCode = await runCli(["search", "10만원 이하 가죽지갑", "--budget", "100000"]);
     const output = stdout.join("\n");
 
     assert.equal(seedCode, 0);
@@ -62,6 +62,7 @@ test("seed and search return leather wallet demo cards with disclosure", async (
     assert.match(output, /아래 추천에는 커미션 링크가 포함될 수 있으며/);
     assert.match(output, /블랙 소가죽 반지갑/);
     assert.match(output, /브라운 슬림 카드지갑/);
+    assert.equal(output.match(/^\d+\. /gm)?.length, 3);
   });
 });
 
