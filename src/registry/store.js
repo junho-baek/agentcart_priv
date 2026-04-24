@@ -20,6 +20,17 @@ function normalizeList(value) {
     .filter(Boolean);
 }
 
+function nextTimestampAfter(previousTimestamp) {
+  const now = new Date();
+  const previousTime = Date.parse(previousTimestamp);
+
+  if (Number.isFinite(previousTime) && now.getTime() <= previousTime) {
+    return new Date(previousTime + 1).toISOString();
+  }
+
+  return now.toISOString();
+}
+
 function createStoredCard(input, createdAt) {
   const normalizedInput = {
     ...input,
@@ -33,6 +44,7 @@ function createStoredCard(input, createdAt) {
 
   return {
     ...card,
+    updatedAt: input.updatedAt ?? createdAt ?? card.createdAt,
     priceAmount: normalizedInput.priceAmount,
     currency: normalizedInput.currency,
     searchKeywords: normalizedInput.searchKeywords,
@@ -84,7 +96,7 @@ export async function saveRegistry(path, registry) {
 
 export async function addCard(path, input) {
   const registry = await loadRegistry(path);
-  const card = createStoredCard(input);
+  let card = createStoredCard(input);
   const { ok, errors } = validateCard(card);
 
   if (!ok) {
@@ -98,6 +110,13 @@ export async function addCard(path, input) {
   if (existingIndex === -1) {
     registry.cards.push(card);
   } else {
+    const existingCard = registry.cards[existingIndex];
+    card = {
+      ...card,
+      id: existingCard.id,
+      createdAt: existingCard.createdAt,
+      updatedAt: nextTimestampAfter(existingCard.updatedAt ?? existingCard.createdAt),
+    };
     registry.cards[existingIndex] = card;
   }
 
@@ -106,10 +125,20 @@ export async function addCard(path, input) {
   return card;
 }
 
-export async function seedRegistry(path = registryPathFor()) {
-  const seedCards = JSON.parse(await readFile(SEED_CARDS_PATH, "utf8"));
+export async function seedRegistry(path = registryPathFor(), options = {}) {
+  const seedCards =
+    options.seedItems ?? JSON.parse(await readFile(SEED_CARDS_PATH, "utf8"));
   const registry = createEmptyRegistry(SEED_CREATED_AT);
-  registry.cards = seedCards.map((seedCard) => createStoredCard(seedCard, SEED_CREATED_AT));
+  registry.cards = seedCards.map((seedCard, index) => {
+    const card = createStoredCard(seedCard, SEED_CREATED_AT);
+    const { ok, errors } = validateCard(card);
+
+    if (!ok) {
+      throw new Error(`Invalid seed card at index ${index}: ${errors.join(", ")}`);
+    }
+
+    return card;
+  });
 
   return saveRegistry(path, registry);
 }

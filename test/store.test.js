@@ -73,6 +73,47 @@ test("addCard validates and persists a normalized Coupang wallet card", async ()
   }
 });
 
+test("addCard upserts by slug while preserving identity timestamps", async () => {
+  const tempDir = await mkdtemp(join(tmpdir(), "agentcart-store-"));
+
+  try {
+    const registryPath = registryPathFor(tempDir);
+    const originalCard = await addCard(registryPath, {
+      title: "블랙 소가죽 반지갑",
+      category: "wallet",
+      originalUrl: "https://link.coupang.com/a/evvpLi",
+      curator: { handle: "wallet_curator" },
+      bestFor: ["남자 선물"],
+      notFor: ["초슬림 지갑 선호"],
+      curationNote: "첫 추천 메모",
+    });
+    const updatedCard = await addCard(registryPath, {
+      title: "블랙 소가죽 반지갑",
+      category: "wallet",
+      originalUrl: "https://link.coupang.com/a/evvpLi",
+      curator: { handle: "wallet_curator" },
+      bestFor: ["남자 선물"],
+      notFor: ["초슬림 지갑 선호"],
+      curationNote: "업데이트된 추천 메모",
+    });
+
+    const loadedRegistry = await loadRegistry(registryPath);
+
+    assert.equal(loadedRegistry.cards.length, 1);
+    assert.equal(updatedCard.id, originalCard.id);
+    assert.equal(updatedCard.createdAt, originalCard.createdAt);
+    assert.ok(updatedCard.updatedAt);
+    assert.notEqual(updatedCard.updatedAt, originalCard.updatedAt);
+    assert.equal(updatedCard.curationNote, "업데이트된 추천 메모");
+    assert.equal(loadedRegistry.cards[0].id, originalCard.id);
+    assert.equal(loadedRegistry.cards[0].createdAt, originalCard.createdAt);
+    assert.equal(loadedRegistry.cards[0].updatedAt, updatedCard.updatedAt);
+    assert.equal(loadedRegistry.cards[0].curationNote, "업데이트된 추천 메모");
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
 test("seedRegistry installs checked-in inventory", async () => {
   const tempDir = await mkdtemp(join(tmpdir(), "agentcart-store-"));
 
@@ -95,6 +136,36 @@ test("seedRegistry installs checked-in inventory", async () => {
     assert.ok(riskFlags.has("delivery_uncertainty"));
     assert.ok(riskFlags.has("health_claim_sensitive"));
     assert.equal(persistedRegistry.cards.length, registry.cards.length);
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("seedRegistry validates seed items before writing", async () => {
+  const tempDir = await mkdtemp(join(tmpdir(), "agentcart-store-"));
+
+  try {
+    const registryPath = registryPathFor(tempDir);
+
+    await assert.rejects(
+      () =>
+        seedRegistry(registryPath, {
+          seedItems: [
+            {
+              title: "",
+              category: "wallet",
+              originalUrl: "https://brand.example/products/broken-wallet",
+              curator: { handle: "wallet_curator" },
+              bestFor: ["남자 선물"],
+              notFor: ["초슬림 지갑 선호"],
+              curationNote: "검증 실패용",
+            },
+          ],
+        }),
+      /Invalid seed card at index 0: title_required/
+    );
+
+    await assert.rejects(() => readFile(registryPath, "utf8"), { code: "ENOENT" });
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }
