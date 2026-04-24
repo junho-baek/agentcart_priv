@@ -363,6 +363,17 @@ html[lang="ja"] h1 {
   backdrop-filter: blur(20px);
 }
 
+.install-panel {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 28px;
+  align-items: center;
+  padding: 32px;
+  background:
+    linear-gradient(135deg, rgba(0, 214, 201, 0.1), transparent 38%),
+    var(--panel);
+}
+
 .register-panel {
   display: grid;
   grid-template-columns: 0.82fr 1.18fr;
@@ -378,10 +389,40 @@ h2 {
 }
 
 .register-panel p,
+.install-panel p,
 .skill-copy p,
 .demo-section p {
   color: var(--muted);
   line-height: 1.65;
+}
+
+.install-command-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid rgba(0, 214, 201, 0.2);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 92% 0%, rgba(255, 159, 28, 0.14), transparent 12rem),
+    #070b10;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+#install-command {
+  display: block;
+  overflow-x: auto;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  color: #f4fbff;
+  background: rgba(255, 255, 255, 0.045);
+  white-space: nowrap;
+}
+
+.copy-install {
+  width: 100%;
+  min-height: 50px;
+  margin: 0;
 }
 
 .register-stack {
@@ -652,6 +693,39 @@ code {
   line-height: 1.45;
 }
 
+.chat-demo {
+  grid-column: 2;
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.chat-line {
+  max-width: 82%;
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 20px;
+  font-size: 0.98rem;
+}
+
+.chat-line.user {
+  justify-self: end;
+  color: #071017;
+  background: var(--teal);
+  border-bottom-right-radius: 6px;
+}
+
+.chat-line.agent {
+  justify-self: start;
+  color: #fff8ec;
+  background: rgba(255, 63, 47, 0.16);
+  border: 1px solid rgba(255, 63, 47, 0.28);
+  border-bottom-left-radius: 6px;
+}
+
 @media (max-width: 920px) {
   .site-shell {
     padding: 14px;
@@ -672,6 +746,7 @@ code {
   }
 
   .hero,
+  .install-panel,
   .register-panel,
   .skill-grid,
   .demo-section {
@@ -686,6 +761,10 @@ code {
 
   .mascot-frame {
     min-height: 300px;
+  }
+
+  .chat-demo {
+    grid-column: auto;
   }
 }
 
@@ -735,8 +814,13 @@ code {
     padding: 24px;
   }
 
+  .install-panel,
   .register-panel {
     padding: 24px;
+  }
+
+  #install-command {
+    white-space: pre-wrap;
   }
 
   .login-card {

@@ -3,23 +3,34 @@ const linkInput = document.querySelector("#product-link");
 const linkResult = document.querySelector("#link-result");
 const copySkillButton = document.querySelector("#copy-skill");
 const copyLoginButton = document.querySelector("#copy-login");
+const copyInstallButton = document.querySelector("#copy-install");
 const skillCommand = document.querySelector("#skill-command");
 const cliLoginCommand = document.querySelector("#cli-login-command");
+const installCommand = document.querySelector("#install-command");
 const languageButtons = document.querySelectorAll("[data-lang]");
 
 const translations = {
   en: {
+    "nav.install": "Install",
     "nav.register": "Register",
     "nav.skill": "Agent skill",
     "nav.demo": "Demo",
     "nav.login": "Login",
-    "hero.kicker": "Agent review site for shopping agents",
-    "hero.title1": "The start of",
-    "hero.title2": "agent commerce.",
+    "hero.kicker": "Open-source skill install for shopping agents",
+    "hero.title1": "Install the",
+    "hero.title2": "shopping skill.",
     "hero.subtitle":
-      "Sellers provide product links with context. Buyers get recommendations through an agent shopping protocol that checks fit, risk, price snapshots, and approval.",
-    "hero.primary": "Start with AgentCart",
-    "hero.secondary": "Send skill to agent",
+      "AgentCart is the commission-link shopping protocol for AI agents. Install the skill so your agent can recommend with disclosure, curator context, and approval before any purchase path opens.",
+    "hero.primary": "Install the skill",
+    "hero.secondary": "Register a link",
+    "install.kicker": "Install AgentCart",
+    "install.title": "Put commission-link recommendations inside your agent chat.",
+    "install.body":
+      "AgentCart's frontend is the agent chat. Install the skill, run the registry API, and let Claude, Codex, or OpenClaw recommend with disclosure and curator context.",
+    "install.command": "npm run agentcart -- install-skill --target codex",
+    "install.copy": "Copy install command",
+    "install.copied": "Install command copied",
+    "install.fallback": "Copy this command manually",
     "seller.kicker": "For sellers and creators",
     "seller.title": "Provide your link with the story agents need.",
     "seller.body":
@@ -54,19 +65,31 @@ const translations = {
       "This should become a short video: a buyer asks for a gift, the agent asks one smart question, AgentCart checks the link, then the buyer approves the purchase path.",
     "demo.cardLabel": "40 sec demo",
     "demo.cardBody": "Buyer asks. Agent checks. Cart opens only when approved.",
+    "demo.chatUser": "Recommend a leather wallet under 100,000 won with AgentCart.",
+    "demo.chatAgent":
+      "First I will show the commission-link disclosure, then recommend only three options that fit your context.",
   },
   ko: {
+    "nav.install": "설치",
     "nav.register": "등록",
     "nav.skill": "에이전트 스킬",
     "nav.demo": "데모",
     "nav.login": "로그인",
-    "hero.kicker": "쇼핑 에이전트를 위한 에이전트 리뷰 사이트",
-    "hero.title1": "에이전트",
-    "hero.title2": "커머스의 시작.",
+    "hero.kicker": "쇼핑 에이전트를 위한 오픈소스 스킬 설치",
+    "hero.title1": "쇼핑 스킬을",
+    "hero.title2": "에이전트에 설치.",
     "hero.subtitle":
-      "판매자는 링크와 설명을 제공하고, 구매자는 에이전트의 합리적인 구매 프로토콜을 통해 추천을 받습니다.",
-    "hero.primary": "AgentCart 시작하기",
-    "hero.secondary": "스킬 보내기",
+      "AgentCart는 AI 에이전트를 위한 커미션 링크 쇼핑 프로토콜입니다. 스킬을 설치하면 에이전트가 고지, 큐레이터 맥락, 승인 흐름을 갖춰 추천합니다.",
+    "hero.primary": "스킬 설치하기",
+    "hero.secondary": "링크 등록하기",
+    "install.kicker": "AgentCart 설치",
+    "install.title": "커미션 링크 추천을 에이전트 채팅 안으로 가져오세요.",
+    "install.body":
+      "AgentCart의 프론트엔드는 에이전트 채팅입니다. 스킬을 설치하고 레지스트리 API를 실행하면 Claude, Codex, OpenClaw가 고지와 큐레이터 맥락을 포함해 추천할 수 있습니다.",
+    "install.command": "npm run agentcart -- install-skill --target codex",
+    "install.copy": "설치 명령 복사",
+    "install.copied": "설치 명령 복사됨",
+    "install.fallback": "명령어를 직접 복사하세요",
     "seller.kicker": "판매자와 크리에이터용",
     "seller.title": "링크만이 아니라, 에이전트가 이해할 설명까지.",
     "seller.body":
@@ -101,19 +124,30 @@ const translations = {
       "짧은 영상으로 만들면 좋습니다. 구매자가 선물을 묻고, 에이전트가 똑똑한 질문을 하나 던지고, AgentCart가 링크를 확인한 뒤, 구매자가 경로를 승인하는 흐름입니다.",
     "demo.cardLabel": "40초 데모",
     "demo.cardBody": "구매자가 묻고, 에이전트가 확인하고, 승인 후에만 카트가 열립니다.",
+    "demo.chatUser": "AgentCart로 10만원 이하 가죽지갑 추천해줘.",
+    "demo.chatAgent": "먼저 커미션 링크 고지를 표시하고, 맥락에 맞는 3개만 추천할게요.",
   },
   zh: {
+    "nav.install": "安装",
     "nav.register": "注册链接",
     "nav.skill": "智能体技能",
     "nav.demo": "演示",
     "nav.login": "登录",
-    "hero.kicker": "面向购物智能体的智能体评测站",
-    "hero.title1": "智能体商务",
-    "hero.title2": "从这里开始。",
+    "hero.kicker": "面向购物智能体的开源技能安装",
+    "hero.title1": "安装",
+    "hero.title2": "购物技能。",
     "hero.subtitle":
-      "卖家提供商品链接和上下文。买家通过智能体购物协议获得推荐，协议会检查匹配度、风险、价格快照和最终批准。",
-    "hero.primary": "开始使用 AgentCart",
-    "hero.secondary": "发送技能",
+      "AgentCart 是面向 AI 智能体的佣金链接购物协议。安装技能后，你的智能体可以在披露、策展上下文和批准流程下推荐商品。",
+    "hero.primary": "安装技能",
+    "hero.secondary": "注册链接",
+    "install.kicker": "安装 AgentCart",
+    "install.title": "把佣金链接推荐放进你的智能体聊天。",
+    "install.body":
+      "AgentCart 的前端就是智能体聊天。安装技能，运行 registry API，让 Claude、Codex 或 OpenClaw 在披露和策展上下文下进行推荐。",
+    "install.command": "npm run agentcart -- install-skill --target codex",
+    "install.copy": "复制安装命令",
+    "install.copied": "已复制安装命令",
+    "install.fallback": "请手动复制此命令",
     "seller.kicker": "面向卖家和创作者",
     "seller.title": "不只是链接，还要给智能体足够的说明。",
     "seller.body":
@@ -148,19 +182,30 @@ const translations = {
       "这里适合放一段短视频：买家询问礼物，智能体追问一个关键问题，AgentCart 检查链接，然后买家批准购买路径。",
     "demo.cardLabel": "40 秒演示",
     "demo.cardBody": "买家提问。智能体检查。只有批准后才打开购物车。",
+    "demo.chatUser": "请用 AgentCart 推荐 10 万韩元以内的皮革钱包。",
+    "demo.chatAgent": "我会先显示佣金链接披露，然后只推荐 3 个符合你上下文的选项。",
   },
   ja: {
+    "nav.install": "インストール",
     "nav.register": "登録",
     "nav.skill": "エージェントスキル",
     "nav.demo": "デモ",
     "nav.login": "ログイン",
-    "hero.kicker": "ショッピングエージェントのためのエージェントレビューサイト",
-    "hero.title1": "エージェント",
-    "hero.title2": "コマースの始まり。",
+    "hero.kicker": "ショッピングエージェント向けのオープンソーススキル",
+    "hero.title1": "ショッピングスキルを",
+    "hero.title2": "インストール。",
     "hero.subtitle":
-      "販売者は商品リンクと文脈を提供し、購入者はエージェントの購入プロトコルを通じて推薦を受け取ります。",
-    "hero.primary": "AgentCart を始める",
-    "hero.secondary": "スキルを送る",
+      "AgentCart は AI エージェントのためのコミッションリンク型ショッピングプロトコルです。スキルを入れると、エージェントは開示、キュレーター文脈、承認を含めて推薦できます。",
+    "hero.primary": "スキルをインストール",
+    "hero.secondary": "リンクを登録",
+    "install.kicker": "AgentCart をインストール",
+    "install.title": "コミッションリンク推薦をエージェントチャットの中へ。",
+    "install.body":
+      "AgentCart のフロントエンドはエージェントチャットです。スキルをインストールし、registry API を動かすことで、Claude、Codex、OpenClaw が開示とキュレーター文脈を含めて推薦できます。",
+    "install.command": "npm run agentcart -- install-skill --target codex",
+    "install.copy": "インストールコマンドをコピー",
+    "install.copied": "インストールコマンドをコピーしました",
+    "install.fallback": "このコマンドを手動でコピーしてください",
     "seller.kicker": "販売者・クリエイター向け",
     "seller.title": "リンクだけでなく、エージェントが理解できる説明も。",
     "seller.body":
@@ -195,6 +240,8 @@ const translations = {
       "ここには短い動画が合います。購入者がギフトを相談し、エージェントがひとつ質問し、AgentCart がリンクを確認し、購入者が購入経路を承認します。",
     "demo.cardLabel": "40 秒デモ",
     "demo.cardBody": "購入者が聞く。エージェントが確認する。承認後だけカートを開く。",
+    "demo.chatUser": "AgentCartで10万ウォン以下の革財布をおすすめして。",
+    "demo.chatAgent": "まずコミッションリンクの開示を表示し、文脈に合う3つだけを推薦します。",
   },
 };
 
@@ -271,6 +318,11 @@ copySkillButton?.addEventListener("click", async () => {
 copyLoginButton?.addEventListener("click", async () => {
   const text = cliLoginCommand.textContent.trim();
   copyText(copyLoginButton, text, "login.copied", "login.fallback", "login.copy");
+});
+
+copyInstallButton?.addEventListener("click", async () => {
+  const text = installCommand.textContent.trim();
+  copyText(copyInstallButton, text, "install.copied", "install.fallback", "install.copy");
 });
 
 languageButtons.forEach((button) => {
