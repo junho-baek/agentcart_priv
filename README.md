@@ -41,7 +41,7 @@ Seeded 10 AgentCart cards
 셀러룸 보기: agentcart curator:room wallet_curator
 열기 전 확인: agentcart open 블랙-소가죽-반지갑
 
-Installed AgentCart skill: .agentcart/skills/agentcart-codex.md
+Installed AgentCart skill: /absolute/path/to/AgentCart/.agentcart/skills/agentcart-codex.md
 ```
 
 ## Registry API

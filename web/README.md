@@ -25,8 +25,8 @@ The production output is written to `web/dist/`.
 
 ```sh
 npm run agentcart -- seed
-npm run serve:registry
 npm run agentcart -- install-skill --target codex
+npm run serve:registry
 ```
 
-The registry server defaults to `http://127.0.0.1:8787`, and the installed skill uses that API unless a different registry URL is configured.
+The registry server defaults to `http://127.0.0.1:8787`, and the installed skill uses that API unless a different registry URL is configured. `npm run serve:registry` is long-running, so keep it open in a separate terminal while testing the API or agent skill.
