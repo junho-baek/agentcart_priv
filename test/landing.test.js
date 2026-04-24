@@ -11,6 +11,12 @@ test("landing page positions AgentCart as an installable commission-link protoco
   assert.match(html, /npm run agentcart -- install-skill/);
   assert.match(html, /id="install"/);
   assert.match(html, /id="copy-install"/);
+  assert.match(html, /Recommend a leather wallet under 100,000 won with AgentCart\./);
+  assert.match(
+    html,
+    /First I will show the commission-link disclosure, then recommend only three options that fit your context\./
+  );
+  assert.doesNotMatch(html, /This should become/);
 });
 
 test("landing translations keep required keys aligned across four languages", async () => {

@@ -62,7 +62,7 @@ const translations = {
     "demo.kicker": "Demo film",
     "demo.title": "Show the moment an agent shops better.",
     "demo.body":
-      "This should become a short video: a buyer asks for a gift, the agent asks one smart question, AgentCart checks the link, then the buyer approves the purchase path.",
+      "Watch the core loop: a buyer asks in chat, AgentCart returns three disclosed recommendations, and the agent waits for approval before opening a purchase path.",
     "demo.cardLabel": "40 sec demo",
     "demo.cardBody": "Buyer asks. Agent checks. Cart opens only when approved.",
     "demo.chatUser": "Recommend a leather wallet under 100,000 won with AgentCart.",
@@ -121,7 +121,7 @@ const translations = {
     "demo.kicker": "데모 영상",
     "demo.title": "에이전트가 더 잘 쇼핑하는 순간을 보여주세요.",
     "demo.body":
-      "짧은 영상으로 만들면 좋습니다. 구매자가 선물을 묻고, 에이전트가 똑똑한 질문을 하나 던지고, AgentCart가 링크를 확인한 뒤, 구매자가 경로를 승인하는 흐름입니다.",
+      "핵심 흐름을 확인하세요. 구매자가 채팅으로 묻고, AgentCart가 고지된 추천 3개를 반환하며, 에이전트는 구매 경로를 열기 전에 승인을 기다립니다.",
     "demo.cardLabel": "40초 데모",
     "demo.cardBody": "구매자가 묻고, 에이전트가 확인하고, 승인 후에만 카트가 열립니다.",
     "demo.chatUser": "AgentCart로 10만원 이하 가죽지갑 추천해줘.",
@@ -179,7 +179,7 @@ const translations = {
     "demo.kicker": "演示视频",
     "demo.title": "展示智能体更会购物的瞬间。",
     "demo.body":
-      "这里适合放一段短视频：买家询问礼物，智能体追问一个关键问题，AgentCart 检查链接，然后买家批准购买路径。",
+      "查看核心流程：买家在聊天中提问，AgentCart 返回 3 个已披露的推荐，智能体在打开购买路径前等待批准。",
     "demo.cardLabel": "40 秒演示",
     "demo.cardBody": "买家提问。智能体检查。只有批准后才打开购物车。",
     "demo.chatUser": "请用 AgentCart 推荐 10 万韩元以内的皮革钱包。",
@@ -237,7 +237,7 @@ const translations = {
     "demo.kicker": "デモ動画",
     "demo.title": "エージェントが買い物上手になる瞬間を見せる。",
     "demo.body":
-      "ここには短い動画が合います。購入者がギフトを相談し、エージェントがひとつ質問し、AgentCart がリンクを確認し、購入者が購入経路を承認します。",
+      "中核の流れを見てください。購入者がチャットで相談し、AgentCart が開示付きの推薦を 3 つ返し、エージェントは購入経路を開く前に承認を待ちます。",
     "demo.cardLabel": "40 秒デモ",
     "demo.cardBody": "購入者が聞く。エージェントが確認する。承認後だけカートを開く。",
     "demo.chatUser": "AgentCartで10万ウォン以下の革財布をおすすめして。",
