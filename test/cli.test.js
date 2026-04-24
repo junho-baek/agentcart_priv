@@ -132,10 +132,15 @@ test("submit registers a card with normalized addCard fields", async () => {
 test("install-skill writes target skill and prints the path", async () => {
   await withCli(async ({ runCli, stdout, workDir }) => {
     const code = await runCli(["install-skill", "--target", "codex"]);
-    const outputPath = stdout.at(-1);
+    const output = stdout.at(-1);
+    const outputPath = output.replace("Installed AgentCart skill: ", "");
     const content = await readFile(outputPath, "utf8");
 
     assert.equal(code, 0);
+    assert.equal(
+      output,
+      `Installed AgentCart skill: ${join(workDir, ".agentcart", "skills", "agentcart-codex.md")}`
+    );
     assert.equal(outputPath, join(workDir, ".agentcart", "skills", "agentcart-codex.md"));
     assert.match(content, /name: agentcart-shopping/);
     assert.match(content, /Never auto-open a monetized purchase link\./);

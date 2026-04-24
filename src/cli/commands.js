@@ -236,7 +236,7 @@ async function runInstallSkill(args, { workDir, stdout }) {
   const output = flagValue(args, "--output");
   const outputPath = await writeSkill({ target, output, workDir });
 
-  stdout(outputPath);
+  stdout(`Installed AgentCart skill: ${outputPath}`);
 
   return 0;
 }
