@@ -106,7 +106,7 @@ test("searchCards sorts by score descending then title and returns top three", (
   assert.equal(results.length, 3);
   assert.deepEqual(
     results.map((card) => card.title),
-    ["가죽 미니 카드지갑", "블랙 소가죽 반지갑", "화이트 무선 충전 스탠드"]
+    ["가죽 미니 카드지갑", "블랙 소가죽 반지갑", "고가 명품 가죽 장지갑"]
   );
 });
 
@@ -140,6 +140,73 @@ test("empty search and formatting return a clear empty state with disclosure", (
     )
   );
   assert.match(response, /아직 맞는 AgentCart 후보가 없습니다\./);
+});
+
+test("direct exact-match cards are not penalized for empty affiliate disclosure", () => {
+  const cards = [
+    recommendationCard({
+      title: "비건 레더 미니 지갑",
+      category: "wallet",
+      originalUrl: "https://brand.example/products/vegan-mini-wallet",
+      priceAmount: 52000,
+      curator: { handle: "vegan_pick" },
+      bestFor: ["비건 선물", "미니 지갑"],
+      notFor: ["천연 가죽 선호"],
+      searchKeywords: ["비건", "지갑"],
+      curationNote: "동물성 소재를 피하는 지갑 선물에 맞음",
+    }),
+    recommendationCard({
+      title: "클래식 가죽 반지갑",
+      category: "wallet",
+      originalUrl: "https://link.coupang.com/a/classic-wallet",
+      priceAmount: 49000,
+      curator: { handle: "wallet_curator" },
+      bestFor: ["가죽지갑"],
+      notFor: ["비건 소재 선호"],
+      searchKeywords: ["지갑"],
+      curationNote: "무난한 기본 지갑",
+    }),
+    recommendationCard({
+      title: "브라운 카드 월렛",
+      category: "wallet",
+      originalUrl: "https://www.amazon.com/dp/B000000001",
+      priceAmount: 45000,
+      curator: { handle: "global_wallets" },
+      bestFor: ["카드지갑"],
+      notFor: ["비건 소재 선호"],
+      searchKeywords: ["wallet"],
+      curationNote: "해외 배송 지갑",
+    }),
+  ];
+
+  const results = searchCards("비건 지갑", cards, { budgetAmount: 60000 });
+
+  assert.equal(results[0].title, "비건 레더 미니 지갑");
+});
+
+test("no-match queries return no cards so formatted output uses the empty state", () => {
+  const results = searchCards("축구공", fixtureCards(), { budgetAmount: 100000 });
+  const response = formatRecommendationResponse(results, "축구공");
+
+  assert.deepEqual(results, []);
+  assert.match(response, /아직 맞는 AgentCart 후보가 없습니다\./);
+});
+
+test("scoreCard ignores invalid budgets without adding budget_exceeded behavior", () => {
+  const [wallet] = fixtureCards();
+  const queryTokens = tokenize("가죽 지갑");
+  const scoreWithoutBudget = scoreCard(wallet, queryTokens, {});
+  const zeroBudgetScore = scoreCard(wallet, queryTokens, { budgetAmount: 0 });
+  const negativeBudgetScore = scoreCard(wallet, queryTokens, { budgetAmount: -100 });
+  const infiniteBudgetScore = scoreCard(wallet, queryTokens, { budgetAmount: Infinity });
+
+  assert.ok(Number.isFinite(zeroBudgetScore));
+  assert.ok(Number.isFinite(negativeBudgetScore));
+  assert.ok(Number.isFinite(infiniteBudgetScore));
+  assert.equal(zeroBudgetScore, scoreWithoutBudget);
+  assert.equal(negativeBudgetScore, scoreWithoutBudget);
+  assert.equal(infiniteBudgetScore, scoreWithoutBudget);
+  assert.deepEqual(wallet.riskFlags, []);
 });
 
 test("scoreCard does not boost affiliate platforms by themselves", () => {

@@ -15,6 +15,8 @@ const TOKEN_SYNONYMS = {
   지갑: ["wallet"],
 };
 
+const AFFILIATE_PLATFORMS = new Set(["amazon", "coupang"]);
+
 function normalizeArray(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -49,6 +51,19 @@ function cardNotForText(card) {
   return normalizeArray(card.notFor).join(" ");
 }
 
+function relevanceScore(card, expandedQueryTokens) {
+  const positiveTokens = expandTokens(tokenize(cardPositiveText(card)));
+  let score = 0;
+
+  for (const token of expandedQueryTokens) {
+    if (positiveTokens.has(token)) {
+      score += 10;
+    }
+  }
+
+  return score;
+}
+
 function hasHttpsUrl(card) {
   try {
     return new URL(card.originalUrl).protocol === "https:";
@@ -81,15 +96,10 @@ export function tokenize(value) {
 
 export function scoreCard(card, queryTokens, context = {}) {
   const expandedQueryTokens = expandTokens(queryTokens);
-  const positiveTokens = expandTokens(tokenize(cardPositiveText(card)));
   const notForTokens = expandTokens(tokenize(cardNotForText(card)));
-  let score = 0;
+  let score = relevanceScore(card, expandedQueryTokens);
 
   for (const token of expandedQueryTokens) {
-    if (positiveTokens.has(token)) {
-      score += 10;
-    }
-
     if (notForTokens.has(token)) {
       score -= 6;
     }
@@ -98,7 +108,7 @@ export function scoreCard(card, queryTokens, context = {}) {
   const budgetAmount = Number(context.budgetAmount);
   const priceAmount = Number(card.priceAmount);
 
-  if (Number.isFinite(budgetAmount) && Number.isFinite(priceAmount)) {
+  if (budgetAmount > 0 && Number.isFinite(budgetAmount) && Number.isFinite(priceAmount)) {
     if (priceAmount <= budgetAmount) {
       score += 18;
     } else {
@@ -107,13 +117,13 @@ export function scoreCard(card, queryTokens, context = {}) {
     }
   }
 
+  const riskFlags = new Set(normalizeArray(card.riskFlags));
+
   if (isPresent(card.disclosure)) {
     score += 5;
-  } else {
-    score += RISK_PENALTIES.missing_disclosure;
+  } else if (AFFILIATE_PLATFORMS.has(card.platform)) {
+    riskFlags.add("missing_disclosure");
   }
-
-  const riskFlags = new Set(normalizeArray(card.riskFlags));
 
   if (!hasHttpsUrl(card)) {
     riskFlags.add("non_https_url");
@@ -124,6 +134,10 @@ export function scoreCard(card, queryTokens, context = {}) {
   }
 
   return score;
+}
+
+function hasPositiveRelevance(card, queryTokens) {
+  return relevanceScore(card, expandTokens(queryTokens)) > 0;
 }
 
 export function searchCards(queryOrCards, cardsOrQuery, context) {
@@ -144,6 +158,7 @@ export function searchCards(queryOrCards, cardsOrQuery, context) {
   }
 
   return cards
+    .filter((card) => hasPositiveRelevance(card, queryTokens))
     .map((card) => ({
       card,
       score: scoreCard(card, queryTokens, searchContext),
