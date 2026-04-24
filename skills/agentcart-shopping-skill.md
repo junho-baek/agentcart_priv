@@ -50,7 +50,7 @@ Start with the required disclosure, then provide concise recommendations:
 5. Curator handle/room
 6. Approval question before opening the link
 
-If the user asks to open a link, restate that it may be monetized and ask for explicit approval unless they have already clearly approved that exact card in the current turn.
+If the user asks to open a link, restate the exact card and monetized URL. Require a separate affirmative confirmation before opening it.
 
 ## Safety Boundaries
 

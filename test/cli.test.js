@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
+import http from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -163,6 +164,16 @@ test("open dry-run prints URL and default open prints approval boundary", async 
   });
 });
 
+test("open accepts boolean dry-run flag before the slug", async () => {
+  await withCli(async ({ runCli, stdout }) => {
+    await runCli(["seed"]);
+    const code = await runCli(["open", "--dry-run", "블랙-소가죽-반지갑"]);
+
+    assert.equal(code, 0);
+    assert.match(stdout.join("\n"), /Dry run: https:\/\/link\.coupang\.com\/a\/evvpLi/);
+  });
+});
+
 test("missing card open returns code 1", async () => {
   await withCli(async ({ runCli, stderr }) => {
     await runCli(["seed"]);
@@ -193,6 +204,51 @@ test("login, whoami, and logout preserve workDir-scoped sessions", async () => {
     assert.match(output, /Account: creator@example.com/);
     assert.match(output, /AgentCart CLI session removed/);
     assert.match(output, /Not logged in\. Run: agentcart login/);
+  });
+});
+
+test("serve can return after listen for in-process tests", async () => {
+  await withCli(async ({ runCli, stdout }) => {
+    let server;
+    const code = await run(["serve", "--port", "0"], {
+      serveKeepAlive: false,
+      onServer: (listeningServer) => {
+        server = listeningServer;
+      },
+      stdout: (line) => stdout.push(line),
+      stderr: () => {},
+    });
+
+    assert.equal(code, 0);
+    assert.ok(server);
+    assert.match(stdout.join("\n"), /AgentCart registry server listening at http:\/\/127\.0\.0\.1:\d+/);
+
+    await new Promise((resolve, reject) => {
+      server.close((error) => (error ? reject(error) : resolve()));
+    });
+  });
+});
+
+test("serve returns code 1 when the port is already in use", async () => {
+  await withCli(async ({ stdout, stderr }) => {
+    const occupiedServer = http.createServer();
+    await new Promise((resolve) => occupiedServer.listen(0, "127.0.0.1", resolve));
+    const { port } = occupiedServer.address();
+
+    try {
+      const code = await run(["serve", "--port", String(port)], {
+        serveKeepAlive: false,
+        stdout: (line) => stdout.push(line),
+        stderr: (line) => stderr.push(line),
+      });
+
+      assert.equal(code, 1);
+      assert.match(stderr.join("\n"), /EADDRINUSE/);
+    } finally {
+      await new Promise((resolve, reject) => {
+        occupiedServer.close((error) => (error ? reject(error) : resolve()));
+      });
+    }
   });
 });
 

@@ -51,6 +51,8 @@ test("makeSkillMarkdown closes behavioral guardrail loopholes", () => {
   assert.match(markdown, /Do not rank by commission rate\./);
   assert.match(markdown, /Never auto-open a monetized purchase link\./);
   assert.match(markdown, /ask for explicit approval before opening/);
+  assert.match(markdown, /Require a separate affirmative confirmation/);
+  assert.doesNotMatch(markdown, /unless they have already clearly approved/);
   assert.match(markdown, /Curator rooms are curated link collections, not seller verification/);
   assert.match(markdown, /Do not claim the lowest price/);
   assert.match(markdown, /Do not hide the affiliate relationship/);

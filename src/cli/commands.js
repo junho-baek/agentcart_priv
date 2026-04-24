@@ -13,6 +13,27 @@ import {
 } from "../registry/store.js";
 import { writeSkill } from "../registry/skill.js";
 
+const VALUE_FLAGS = new Set([
+  "--best-for",
+  "--budget",
+  "--category",
+  "--currency",
+  "--curator",
+  "--disclosure",
+  "--display-name",
+  "--email",
+  "--host",
+  "--keywords",
+  "--not-for",
+  "--note",
+  "--output",
+  "--port",
+  "--price",
+  "--target",
+  "--title",
+  "--url",
+]);
+
 function normalizeWorkDir(workDir = process.cwd()) {
   return isAbsolute(workDir) ? workDir : join(process.cwd(), workDir);
 }
@@ -22,6 +43,13 @@ function makePrinter(print) {
 }
 
 function flagValue(args, name) {
+  const equalsPrefix = `${name}=`;
+  const equalsArg = args.find((arg) => arg.startsWith(equalsPrefix));
+
+  if (equalsArg) {
+    return equalsArg.slice(equalsPrefix.length);
+  }
+
   const index = args.indexOf(name);
 
   if (index === -1) {
@@ -42,7 +70,10 @@ function positionalArgs(args) {
     const arg = args[index];
 
     if (arg.startsWith("--")) {
-      index += 1;
+      if (VALUE_FLAGS.has(arg)) {
+        index += 1;
+      }
+
       continue;
     }
 
@@ -266,13 +297,43 @@ async function runOpen(args, { workDir, stdout, stderr }) {
   return 0;
 }
 
-async function runServe(args, { workDir, stdout }) {
+function listen(server, port, host) {
+  return new Promise((resolve, reject) => {
+    function cleanup() {
+      server.off("error", onError);
+    }
+
+    function onError(error) {
+      cleanup();
+      reject(error);
+    }
+
+    server.once("error", onError);
+    server.listen(port, host, () => {
+      cleanup();
+      resolve();
+    });
+  });
+}
+
+async function runServe(args, { workDir, stdout, serveKeepAlive, onServer, onListen }) {
   const port = Number(flagValue(args, "--port") ?? process.env.PORT ?? 8787);
   const host = flagValue(args, "--host") ?? "127.0.0.1";
   const server = createServer({ registryPath: registryPathFor(workDir) });
 
-  await new Promise((resolve) => server.listen(port, host, resolve));
-  stdout(`AgentCart registry server listening at http://${host}:${port}`);
+  await listen(server, port, host);
+
+  const address = server.address();
+  const listeningPort = typeof address === "object" && address ? address.port : port;
+  const url = `http://${host}:${listeningPort}`;
+
+  stdout(`AgentCart registry server listening at ${url}`);
+  onServer?.(server);
+  onListen?.({ server, url, host, port: listeningPort });
+
+  if (!serveKeepAlive) {
+    return 0;
+  }
 
   await new Promise(() => {});
 }
@@ -281,6 +342,7 @@ export async function run(args = [], options = {}) {
   const stdout = makePrinter(options.stdout ?? console.log);
   const stderr = makePrinter(options.stderr ?? console.error);
   const workDir = normalizeWorkDir(options.workDir);
+  const serveKeepAlive = options.serveKeepAlive ?? true;
   const command = args[0];
   const commandArgs = args.slice(1);
 
@@ -327,7 +389,13 @@ export async function run(args = [], options = {}) {
     }
 
     if (command === "serve") {
-      return await runServe(commandArgs, { workDir, stdout });
+      return await runServe(commandArgs, {
+        workDir,
+        stdout,
+        serveKeepAlive,
+        onServer: options.onServer,
+        onListen: options.onListen,
+      });
     }
 
     stderr(`Unknown command: ${command}`);
