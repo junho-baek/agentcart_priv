@@ -14,6 +14,7 @@ test("detectPlatform recognizes the first supported commerce platforms", () => {
   assert.equal(detectPlatform("https://www.aliexpress.com/item/100500.html"), "aliexpress");
   assert.equal(detectPlatform("https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A0001"), "oliveyoung");
   assert.equal(detectPlatform("https://brand.example/products/wallet"), "direct");
+  assert.equal(detectPlatform("not a url"), "unknown");
 });
 
 test("normalizeDisclosure returns platform-safe Korean disclosure text", () => {
