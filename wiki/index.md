@@ -20,6 +20,8 @@ This file is the content-oriented catalog of the wiki.
 
 - [platform-safe-affiliate-registry](concepts/platform-safe-affiliate-registry.md): AgentCart as a compliance-aware product/link registry for shopping agents.
 - [agentcart-db-scaling](concepts/agentcart-db-scaling.md): Sharded SQLite/libSQL registry architecture for viral product-link submissions.
+- [agentcart-curator-channel-flywheel](concepts/agentcart-curator-channel-flywheel.md): AgentCart as agent-readable recommendation channels for commission creators, with buyer trust as the constraint.
+- [agent-assisted-purchase-protocol](concepts/agent-assisted-purchase-protocol.md): Safe boundary for agent-assisted checkout, with human control at login, sensitive data, and final payment.
 
 ## Entities
 
@@ -28,3 +30,4 @@ This file is the content-oriented catalog of the wiki.
 ## Analyses
 
 - [agentcart-platform-compliance-and-db-strategy](analyses/agentcart-platform-compliance-and-db-strategy.md): Office-hours style decision memo on platform compliance and DB strategy.
+- [agentcart-creator-affiliate-competitive-landscape](analyses/agentcart-creator-affiliate-competitive-landscape.md): Competitor landscape for creator affiliate links, storefronts, affiliate networks, and AgentCart positioning risk.
