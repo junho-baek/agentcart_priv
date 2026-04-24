@@ -78,13 +78,20 @@ export function buildEmbeddingText(card) {
 
 export function validateCard(card) {
   const errors = [];
+  const originalUrl = String(card?.originalUrl ?? "").trim();
 
   if (!String(card?.title ?? "").trim()) {
     errors.push("title_required");
   }
 
-  if (!String(card?.originalUrl ?? "").trim()) {
+  if (!originalUrl) {
     errors.push("original_url_required");
+  } else {
+    try {
+      new URL(originalUrl);
+    } catch {
+      errors.push("valid_url_required");
+    }
   }
 
   if (!String(card?.curator?.handle ?? "").trim()) {
@@ -109,7 +116,7 @@ export function slugify(value) {
   return String(value ?? "")
     .trim()
     .toLowerCase()
-    .normalize("NFKD")
+    .normalize("NFC")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9가-힣]+/g, "-")
     .replace(/^-+|-+$/g, "");

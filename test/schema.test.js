@@ -3,8 +3,10 @@ import test from "node:test";
 
 import {
   buildEmbeddingText,
+  createCard,
   detectPlatform,
   normalizeDisclosure,
+  slugify,
   validateCard,
 } from "../src/registry/schema.js";
 
@@ -45,6 +47,38 @@ test("validateCard rejects missing curator, URL, title, and context", () => {
     "best_for_required",
     "not_for_required",
   ]);
+});
+
+test("validateCard rejects malformed non-empty URLs", () => {
+  const result = validateCard({
+    title: "블랙 소가죽 반지갑",
+    originalUrl: "not a url",
+    curator: { handle: "gift-curator" },
+    bestFor: ["남자 선물"],
+    notFor: ["초슬림 지갑 선호"],
+  });
+
+  assert.deepEqual(result.ok, false);
+  assert.deepEqual(result.errors, ["valid_url_required"]);
+});
+
+test("slugify preserves Korean syllables", () => {
+  assert.equal(slugify("온열 목 마사지기"), "온열-목-마사지기");
+});
+
+test("createCard produces a Korean slug and embedding text for Korean-only titles", () => {
+  const card = createCard({
+    title: "온열 목 마사지기",
+    originalUrl: "https://brand.example/products/massager",
+    category: "massager",
+    curator: { handle: "gift-curator" },
+    bestFor: ["부모님 선물"],
+    notFor: ["휴대용 선호"],
+    curationNote: "집에서 쓰기 좋은 온열 기능",
+  });
+
+  assert.equal(card.slug, "온열-목-마사지기");
+  assert.match(card.embeddingText, /온열 목 마사지기/);
 });
 
 test("buildEmbeddingText is stable and vector-ready", () => {
