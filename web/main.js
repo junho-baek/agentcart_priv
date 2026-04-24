@@ -43,9 +43,9 @@ const translations = {
     "seller.queued": "Packed preview queued: your AgentCart product card is ready for review.",
     "seller.commandLabel": "Seller agent command",
     "seller.command":
-      "Read https://agentcart.dev/seller-skill.md\nand register this product link for AgentCart.",
+      'npm run agentcart -- submit --title "Product title" --url "https://example.com/product" --curator your_handle --category "category" --best-for "who it helps" --not-for "who should skip" --note "why it is worth recommending"',
     "seller.commandHelp":
-      "Works from Codex, Claude, OpenClaw, or any agent that can read a skill URL.",
+      "Runs locally through the checked-in AgentCart CLI submit flow.",
     "login.prompt": "Already registered something?",
     "login.copy": "Copy CLI login",
     "login.copied": "CLI login copied",
@@ -55,7 +55,7 @@ const translations = {
     "buyer.body":
       "AgentCart gives shopping agents a process: ask context, compare options, explain the tradeoffs, disclose incentives, and wait for approval before opening a purchase link.",
     "buyer.command":
-      "Read https://agentcart.dev/skill.md\nand use AgentCart whenever I ask what to buy.",
+      "Run npm run agentcart -- install-skill --target codex\nthen read .agentcart/skills/agentcart-codex.md and use AgentCart whenever I ask what to buy.",
     "buyer.copy": "Copy for my agent",
     "buyer.copied": "Copied for your agent",
     "buyer.fallback": "Copy this text manually",
@@ -102,9 +102,9 @@ const translations = {
     "seller.queued": "패킹 완료: AgentCart 상품 카드가 검토 대기열에 들어갔습니다.",
     "seller.commandLabel": "판매자 에이전트 명령",
     "seller.command":
-      "https://agentcart.dev/seller-skill.md 를 읽고\n이 상품 링크를 AgentCart에 등록해줘.",
+      'npm run agentcart -- submit --title "상품명" --url "https://example.com/product" --curator your_handle --category "category" --best-for "추천 대상" --not-for "비추천 대상" --note "추천 이유"',
     "seller.commandHelp":
-      "Codex, Claude, OpenClaw 또는 skill URL을 읽을 수 있는 에이전트에서 사용할 수 있습니다.",
+      "체크인된 AgentCart CLI submit 흐름으로 로컬에서 실행됩니다.",
     "login.prompt": "이미 등록한 링크가 있나요?",
     "login.copy": "CLI 로그인 복사",
     "login.copied": "CLI 로그인 복사됨",
@@ -114,7 +114,7 @@ const translations = {
     "buyer.body":
       "AgentCart는 쇼핑 에이전트에게 절차를 제공합니다. 맥락을 묻고, 후보를 비교하고, 이유와 이해관계를 설명하고, 승인 후에만 구매 링크를 엽니다.",
     "buyer.command":
-      "https://agentcart.dev/skill.md 를 읽고\n내가 무엇을 살지 물어보면 AgentCart를 사용해줘.",
+      "npm run agentcart -- install-skill --target codex 를 실행한 뒤\n.agentcart/skills/agentcart-codex.md 를 읽고 내가 무엇을 살지 물어보면 AgentCart를 사용해줘.",
     "buyer.copy": "내 에이전트용 복사",
     "buyer.copied": "에이전트용으로 복사됨",
     "buyer.fallback": "텍스트를 직접 복사하세요",
@@ -160,9 +160,9 @@ const translations = {
     "seller.queued": "已打包：AgentCart 商品卡已进入审核队列。",
     "seller.commandLabel": "卖家智能体命令",
     "seller.command":
-      "Read https://agentcart.dev/seller-skill.md\nand register this product link for AgentCart.",
+      'npm run agentcart -- submit --title "Product title" --url "https://example.com/product" --curator your_handle --category "category" --best-for "who it helps" --not-for "who should skip" --note "why it is worth recommending"',
     "seller.commandHelp":
-      "可用于 Codex、Claude、OpenClaw，或任何能读取 skill URL 的智能体。",
+      "通过仓库内的 AgentCart CLI submit 流程在本地运行。",
     "login.prompt": "已经注册过内容？",
     "login.copy": "复制 CLI 登录",
     "login.copied": "已复制 CLI 登录",
@@ -172,7 +172,7 @@ const translations = {
     "buyer.body":
       "AgentCart 为购物智能体提供流程：追问上下文、比较选项、解释取舍、披露激励，并在获得批准后才打开购买链接。",
     "buyer.command":
-      "Read https://agentcart.dev/skill.md\nand use AgentCart whenever I ask what to buy.",
+      "Run npm run agentcart -- install-skill --target codex\nthen read .agentcart/skills/agentcart-codex.md and use AgentCart whenever I ask what to buy.",
     "buyer.copy": "复制给我的智能体",
     "buyer.copied": "已复制给你的智能体",
     "buyer.fallback": "请手动复制文本",
@@ -218,9 +218,9 @@ const translations = {
     "seller.queued": "パック完了: AgentCart 商品カードがレビュー待ちになりました。",
     "seller.commandLabel": "販売者エージェント用コマンド",
     "seller.command":
-      "Read https://agentcart.dev/seller-skill.md\nand register this product link for AgentCart.",
+      'npm run agentcart -- submit --title "Product title" --url "https://example.com/product" --curator your_handle --category "category" --best-for "who it helps" --not-for "who should skip" --note "why it is worth recommending"',
     "seller.commandHelp":
-      "Codex、Claude、OpenClaw、または skill URL を読める任意のエージェントで使えます。",
+      "チェックイン済みの AgentCart CLI submit フローでローカル実行します。",
     "login.prompt": "すでに登録したものがありますか？",
     "login.copy": "CLI ログインをコピー",
     "login.copied": "CLI ログインをコピーしました",
@@ -230,7 +230,7 @@ const translations = {
     "buyer.body":
       "AgentCart はショッピングエージェントに手順を与えます。文脈を聞き、候補を比較し、理由と利害関係を説明し、承認後にだけ購入リンクを開きます。",
     "buyer.command":
-      "Read https://agentcart.dev/skill.md\nand use AgentCart whenever I ask what to buy.",
+      "Run npm run agentcart -- install-skill --target codex\nthen read .agentcart/skills/agentcart-codex.md and use AgentCart whenever I ask what to buy.",
     "buyer.copy": "エージェント用にコピー",
     "buyer.copied": "エージェント用にコピーしました",
     "buyer.fallback": "テキストを手動でコピーしてください",

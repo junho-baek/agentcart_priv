@@ -128,15 +128,14 @@
 
             <div class="seller-skill-card">
               <span data-i18n="seller.commandLabel">Seller agent command</span>
-              <code id="seller-command" data-i18n="seller.command">Read https://agentcart.dev/seller-skill.md
-and register this product link for AgentCart.</code>
-              <p data-i18n="seller.commandHelp">Works from Codex, Claude, OpenClaw, or any agent that can read a skill URL.</p>
+              <code id="seller-command" data-i18n="seller.command">npm run agentcart -- submit --title "Product title" --url "https://example.com/product" --curator your_handle --category "category" --best-for "who it helps" --not-for "who should skip" --note "why it is worth recommending"</code>
+              <p data-i18n="seller.commandHelp">Runs locally through the checked-in AgentCart CLI submit flow.</p>
             </div>
 
             <div id="login" class="login-card">
               <div>
                 <p data-i18n="login.prompt">Already registered something?</p>
-                <code id="cli-login-command">npx agentcart login</code>
+                <code id="cli-login-command">npm run agentcart -- login</code>
               </div>
               <button type="button" id="copy-login" data-i18n="login.copy">Copy CLI login</button>
             </div>
@@ -161,8 +160,8 @@ and register this product link for AgentCart.</code>
               <span></span>
               <strong>skill.md</strong>
             </div>
-            <pre><code id="skill-command" data-i18n="buyer.command">Read https://agentcart.dev/skill.md
-and use AgentCart whenever I ask what to buy.</code></pre>
+            <pre><code id="skill-command" data-i18n="buyer.command">Run npm run agentcart -- install-skill --target codex
+then read .agentcart/skills/agentcart-codex.md and use AgentCart whenever I ask what to buy.</code></pre>
             <button class="copy-button" id="copy-skill" type="button" data-i18n="buyer.copy">
               Copy for my agent
             </button>

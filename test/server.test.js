@@ -193,6 +193,48 @@ test("oversized feedback body returns deterministic JSON 413", async () => {
   });
 });
 
+test("allowed browser preflight echoes the trusted local origin", async () => {
+  await withSeededServer(async ({ baseUrl }) => {
+    const origin = "http://127.0.0.1:5173";
+    const response = await fetch(`${baseUrl}/api/feedback`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: origin,
+        "Access-Control-Request-Method": "POST",
+      },
+    });
+
+    assert.equal(response.status, 204);
+    assert.equal(response.headers.get("access-control-allow-origin"), origin);
+    assert.equal(response.headers.get("vary"), "Origin");
+  });
+});
+
+test("disallowed browser origin cannot persist feedback", async () => {
+  await withSeededServer(async ({ baseUrl, registryPath }) => {
+    const registry = await loadRegistry(registryPath);
+    const card = registry.cards[0];
+    const response = await fetch(`${baseUrl}/api/feedback`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Origin: "https://evil.example",
+      },
+      body: JSON.stringify({
+        cardId: card.id,
+        curatorHandle: card.curator.handle,
+        helpful: true,
+      }),
+    });
+    const body = await response.json();
+    const persistedRegistry = await loadRegistry(registryPath);
+
+    assert.equal(response.status, 403);
+    assert.deepEqual(body, { error: "origin_not_allowed" });
+    assert.equal(persistedRegistry.feedbackEvents.length, 0);
+  });
+});
+
 test("malformed percent-encoded route segments return not found", async () => {
   await withSeededServer(async ({ baseUrl }) => {
     const { response, body } = await fetchJson(`${baseUrl}/api/cards/%E0%A4%A`);

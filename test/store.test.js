@@ -141,6 +141,64 @@ test("seedRegistry installs checked-in inventory", async () => {
   }
 });
 
+test("seedRegistry preserves local cards and events while upserting seed cards", async () => {
+  const tempDir = await mkdtemp(join(tmpdir(), "agentcart-store-"));
+
+  try {
+    const registryPath = registryPathFor(tempDir);
+    const seededRegistry = await seedRegistry(registryPath);
+    const existingSeedCard = seededRegistry.cards[0];
+    const userCard = await addCard(registryPath, {
+      title: "동네 공방 카드지갑",
+      category: "wallet",
+      originalUrl: "https://maker.example/products/local-card-wallet",
+      curator: { handle: "local_maker" },
+      bestFor: ["수제 지갑"],
+      notFor: ["대량 생산 선호"],
+      curationNote: "사용자가 직접 등록한 카드",
+    });
+    const registryWithEvents = await loadRegistry(registryPath);
+    registryWithEvents.feedbackEvents.push({
+      id: "fb_local_card_20260424000000",
+      cardId: userCard.id,
+      curatorHandle: "local_maker",
+      helpful: true,
+      linkMatchedExpectation: true,
+      disclosureWasClear: true,
+      comment: "keep this",
+      createdAt: "2026-04-24T00:00:00.000Z",
+    });
+    registryWithEvents.recommendationEvents.push({ id: "rec_existing" });
+    registryWithEvents.clickEvents.push({ id: "click_existing" });
+    await saveRegistry(registryPath, registryWithEvents);
+
+    const reseededRegistry = await seedRegistry(registryPath);
+    const rereseededRegistry = await seedRegistry(registryPath);
+
+    assert.ok(reseededRegistry.cards.some((card) => card.id === userCard.id));
+    assert.ok(
+      reseededRegistry.cards.some((card) => card.title === "블랙 소가죽 반지갑")
+    );
+    assert.equal(reseededRegistry.feedbackEvents.length, 1);
+    assert.equal(reseededRegistry.feedbackEvents[0].id, "fb_local_card_20260424000000");
+    assert.deepEqual(reseededRegistry.recommendationEvents, [{ id: "rec_existing" }]);
+    assert.deepEqual(reseededRegistry.clickEvents, [{ id: "click_existing" }]);
+
+    const reseededSeedCards = reseededRegistry.cards.filter(
+      (card) => card.slug === existingSeedCard.slug
+    );
+    const rereseededSeedCards = rereseededRegistry.cards.filter(
+      (card) => card.slug === existingSeedCard.slug
+    );
+    assert.equal(reseededSeedCards.length, 1);
+    assert.equal(rereseededSeedCards.length, 1);
+    assert.equal(reseededSeedCards[0].id, existingSeedCard.id);
+    assert.equal(reseededSeedCards[0].createdAt, existingSeedCard.createdAt);
+  } finally {
+    await rm(tempDir, { recursive: true, force: true });
+  }
+});
+
 test("seedRegistry validates seed items before writing", async () => {
   const tempDir = await mkdtemp(join(tmpdir(), "agentcart-store-"));
 

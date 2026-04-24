@@ -8,18 +8,35 @@ import { loadRegistry, registryPathFor, saveRegistry } from "../registry/store.j
 const DISCLOSURE =
   "추천 결과에는 커미션 링크가 포함될 수 있으며, 구매 시 링크 등록자가 수수료를 받을 수 있습니다.";
 const MAX_BODY_BYTES = 1_000_000;
+const DEFAULT_ALLOWED_ORIGINS = ["http://127.0.0.1:5173", "http://localhost:5173"];
 
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
+function corsHeadersFor(origin, allowedOrigins) {
+  const headers = {
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
+
+  if (!origin) {
+    return {
+      ...headers,
+      "Access-Control-Allow-Origin": "*",
+    };
+  }
+
+  if (allowedOrigins.has(origin)) {
+    return {
+      ...headers,
+      "Access-Control-Allow-Origin": origin,
+      Vary: "Origin",
+    };
+  }
+
+  return null;
 }
 
-function sendJson(response, statusCode, body) {
+function sendJson(response, statusCode, body, headers = {}) {
   response.writeHead(statusCode, {
-    ...corsHeaders(),
+    ...headers,
     "Content-Type": "application/json; charset=utf-8",
   });
   response.end(`${JSON.stringify(body)}\n`);
@@ -77,8 +94,9 @@ function routeParts(pathname) {
   }
 }
 
-export function createServer({ registryPath } = {}) {
+export function createServer({ registryPath, allowedOrigins = DEFAULT_ALLOWED_ORIGINS } = {}) {
   const activeRegistryPath = registryPath ?? registryPathFor();
+  const allowedOriginSet = new Set(allowedOrigins);
   let feedbackWriteQueue = Promise.resolve();
 
   function enqueueFeedbackWrite(writeFeedback) {
@@ -89,12 +107,15 @@ export function createServer({ registryPath } = {}) {
   }
 
   return http.createServer(async (request, response) => {
-    response.setHeader("Access-Control-Allow-Origin", "*");
-    response.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    const corsHeaders = corsHeadersFor(request.headers.origin, allowedOriginSet);
+
+    if (!corsHeaders) {
+      sendJson(response, 403, { error: "origin_not_allowed" });
+      return;
+    }
 
     if (request.method === "OPTIONS") {
-      response.writeHead(204, corsHeaders());
+      response.writeHead(204, corsHeaders);
       response.end();
       return;
     }
@@ -103,7 +124,7 @@ export function createServer({ registryPath } = {}) {
       const url = new URL(request.url ?? "/", "http://localhost");
 
       if (request.method === "GET" && url.pathname === "/health") {
-        sendJson(response, 200, { ok: true, service: "agentcart-registry" });
+        sendJson(response, 200, { ok: true, service: "agentcart-registry" }, corsHeaders);
         return;
       }
 
@@ -122,14 +143,14 @@ export function createServer({ registryPath } = {}) {
           disclosure: DISCLOSURE,
           responseText: formatRecommendationResponse(cards, query),
           results: cards.map((card) => ({ card })),
-        });
+        }, corsHeaders);
         return;
       }
 
       const parts = routeParts(url.pathname);
 
       if (parts === null) {
-        sendJson(response, 404, { error: "not_found" });
+        sendJson(response, 404, { error: "not_found" }, corsHeaders);
         return;
       }
 
@@ -141,11 +162,11 @@ export function createServer({ registryPath } = {}) {
         );
 
         if (!card) {
-          sendJson(response, 404, { error: "card_not_found" });
+          sendJson(response, 404, { error: "card_not_found" }, corsHeaders);
           return;
         }
 
-        sendJson(response, 200, { card });
+        sendJson(response, 200, { card }, corsHeaders);
         return;
       }
 
@@ -159,11 +180,11 @@ export function createServer({ registryPath } = {}) {
         const room = getCuratorRoom(registry, parts[2]);
 
         if (!room) {
-          sendJson(response, 404, { error: "curator_not_found" });
+          sendJson(response, 404, { error: "curator_not_found" }, corsHeaders);
           return;
         }
 
-        sendJson(response, 200, { room });
+        sendJson(response, 200, { room }, corsHeaders);
         return;
       }
 
@@ -174,12 +195,12 @@ export function createServer({ registryPath } = {}) {
           body = await parseJsonBody(request);
         } catch (error) {
           if (error.message === "body_too_large") {
-            sendJson(response, 413, { error: "body_too_large" });
+            sendJson(response, 413, { error: "body_too_large" }, corsHeaders);
             return;
           }
 
           if (error.message === "invalid_json") {
-            sendJson(response, 400, { error: "invalid_json" });
+            sendJson(response, 400, { error: "invalid_json" }, corsHeaders);
             return;
           }
 
@@ -191,7 +212,7 @@ export function createServer({ registryPath } = {}) {
         try {
           event = createFeedbackEvent(body);
         } catch (error) {
-          sendJson(response, 400, { error: error.message });
+          sendJson(response, 400, { error: error.message }, corsHeaders);
           return;
         }
 
@@ -204,13 +225,13 @@ export function createServer({ registryPath } = {}) {
           await saveRegistry(activeRegistryPath, registry);
         });
 
-        sendJson(response, 201, { event });
+        sendJson(response, 201, { event }, corsHeaders);
         return;
       }
 
-      sendJson(response, 404, { error: "not_found" });
+      sendJson(response, 404, { error: "not_found" }, corsHeaders);
     } catch {
-      sendJson(response, 500, { error: "internal_error" });
+      sendJson(response, 500, { error: "internal_error" }, corsHeaders);
     }
   });
 }

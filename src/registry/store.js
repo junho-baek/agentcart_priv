@@ -128,8 +128,7 @@ export async function addCard(path, input) {
 export async function seedRegistry(path = registryPathFor(), options = {}) {
   const seedCards =
     options.seedItems ?? JSON.parse(await readFile(SEED_CARDS_PATH, "utf8"));
-  const registry = createEmptyRegistry(SEED_CREATED_AT);
-  registry.cards = seedCards.map((seedCard, index) => {
+  const validatedSeedCards = seedCards.map((seedCard, index) => {
     const card = createStoredCard(seedCard, SEED_CREATED_AT);
     const { ok, errors } = validateCard(card);
 
@@ -139,6 +138,38 @@ export async function seedRegistry(path = registryPathFor(), options = {}) {
 
     return card;
   });
+  const registry = await loadRegistry(path);
+  const existingCards = Array.isArray(registry.cards) ? registry.cards : [];
+  const cards = [...existingCards];
+
+  for (const seedCard of validatedSeedCards) {
+    const existingIndex = cards.findIndex(
+      (existingCard) =>
+        existingCard.id === seedCard.id || existingCard.slug === seedCard.slug
+    );
+
+    if (existingIndex === -1) {
+      cards.push(seedCard);
+      continue;
+    }
+
+    const existingCard = cards[existingIndex];
+    cards[existingIndex] = {
+      ...seedCard,
+      id: existingCard.id,
+      createdAt: existingCard.createdAt,
+      updatedAt: nextTimestampAfter(existingCard.updatedAt ?? existingCard.createdAt),
+    };
+  }
+
+  registry.cards = cards;
+  registry.feedbackEvents = Array.isArray(registry.feedbackEvents)
+    ? registry.feedbackEvents
+    : [];
+  registry.recommendationEvents = Array.isArray(registry.recommendationEvents)
+    ? registry.recommendationEvents
+    : [];
+  registry.clickEvents = Array.isArray(registry.clickEvents) ? registry.clickEvents : [];
 
   return saveRegistry(path, registry);
 }
