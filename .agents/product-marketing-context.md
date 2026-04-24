@@ -4,9 +4,9 @@
 
 ## Product Overview
 
-**One-liner:** AgentCart turns product and affiliate links into agent-readable commerce cards that shopping agents can register, review, recommend, and open after user approval.
+**One-liner:** AgentCart is the start of agent commerce: sellers provide product links with context, and buyers receive recommendations through an agent shopping protocol.
 
-**What it does:** AgentCart is a middle DB and skill layer for agent commerce. Sellers and creators register product links, affiliate disclosures, price snapshots, claims, and agent-readable JSON. Buyer agents query AgentCart, ask context questions, review risk, recommend products, and open the original purchase link only after approval.
+**What it does:** AgentCart is a middle DB and skill layer for agent commerce. Sellers and creators provide product links, affiliate disclosures, price snapshots, claims, and context. Buyer agents query AgentCart, ask context questions, compare options through a reasonable buying protocol, recommend products, and open the original purchase link only after approval.
 
 **Product category:** Agent commerce registry, shopping agent skill layer, affiliate/product link registry, agent-readable product database.
 
@@ -24,8 +24,8 @@
 
 **Jobs to be done:**
 
-- Register my product or affiliate link into a shopping-agent-accessible registry.
-- Let a buyer's agent review and recommend my product without hiding disclosure or stale price risk.
+- Provide my product or affiliate link with enough context for agents to understand it.
+- Let a buyer's agent recommend my product through a reasonable buying protocol without hiding disclosure or stale price risk.
 - Track how often agents recommend, click, and convert my registered links.
 
 **Use cases:**
@@ -107,6 +107,8 @@
 
 **How they describe the problem:**
 
+- "에이전트 커머스의 시작."
+- "판매자는 링크와 설명을 제공하고, 구매자는 에이전트의 합리적인 구매 프로토콜을 통해 추천을 받는다."
 - "내 제휴 링크를 AI 쇼핑 에이전트가 추천할 수 있게 등록하고 싶어."
 - "$에이전트카트 사용해서 내 제품 등록하고 싶어."
 - "엄마 생일 선물 10만원 이하로 뭐가 좋을까?"
