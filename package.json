@@ -3,9 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "bin": {
+    "agentcart": "./cli.js"
+  },
   "scripts": {
     "dev": "vite web --host 0.0.0.0",
     "build": "vite build web",
+    "agentcart": "node cli.js",
+    "login": "node cli.js login",
     "preview": "vite preview web --host 0.0.0.0"
   },
   "devDependencies": {

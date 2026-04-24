@@ -28,11 +28,19 @@
           <span>AgentCart</span>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#register">Register</a>
-          <a href="#skill">Agent skill</a>
-          <a href="#demo">Demo</a>
+          <a href="#register" data-i18n="nav.register">Register</a>
+          <a href="#skill" data-i18n="nav.skill">Agent skill</a>
+          <a href="#demo" data-i18n="nav.demo">Demo</a>
         </nav>
-        <a class="topbar-cta" href="#login">Login</a>
+        <div class="topbar-actions">
+          <div class="language-switcher" aria-label="Language selector">
+            <button type="button" data-lang="en" aria-pressed="true">EN</button>
+            <button type="button" data-lang="ko" aria-pressed="false">KO</button>
+            <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+            <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
+          </div>
+          <a class="topbar-cta" href="#login" data-i18n="nav.login">Login</a>
+        </div>
       </header>
 
       <main>
@@ -40,20 +48,20 @@
           <div class="hero-copy">
             <p class="eyebrow">
               <span></span>
-              The product registry for shopping agents
+              <span data-i18n="hero.kicker">The product registry for shopping agents</span>
             </p>
             <h1 id="hero-title">
-              Your links,
-              <span>ready for agents.</span>
+              <span class="title-cream" data-i18n="hero.title1">Your links,</span>
+              <span class="title-coral" data-i18n="hero.title2">ready for agents.</span>
             </h1>
-            <p class="hero-subtitle">
+            <p class="hero-subtitle" data-i18n="hero.subtitle">
               Paste a product link, or ask your agent to register it. AgentCart
               turns it into a product card shopping agents can understand.
             </p>
 
             <div class="hero-actions">
-              <a class="primary-button" href="#register">Register a link</a>
-              <a class="ghost-button" href="#skill">Send skill to agent</a>
+              <a class="primary-button" href="#register" data-i18n="hero.primary">Register a link</a>
+              <a class="ghost-button" href="#skill" data-i18n="hero.secondary">Send skill to agent</a>
             </div>
           </div>
 
@@ -69,9 +77,9 @@
 
         <section id="register" class="panel register-panel">
           <div>
-            <p class="section-kicker">For sellers and creators</p>
-            <h2>Register links by hand, or through your agent.</h2>
-            <p>
+            <p class="section-kicker" data-i18n="seller.kicker">For sellers and creators</p>
+            <h2 data-i18n="seller.title">Register links by hand, or through your agent.</h2>
+            <p data-i18n="seller.body">
               Add a Coupang, Amazon, SmartStore, AliExpress, or store link.
               Or tell Codex, Claude, or OpenClaw to submit it for you.
             </p>
@@ -79,41 +87,45 @@
 
           <div class="register-stack">
             <form class="link-form" id="link-form">
-              <label for="product-link">Product or affiliate link</label>
+              <label for="product-link" data-i18n="seller.inputLabel">Product or affiliate link</label>
               <div class="input-row">
                 <input
                   id="product-link"
                   name="product-link"
                   type="url"
                   placeholder="https://example.com/product"
+                  data-i18n-placeholder="seller.inputPlaceholder"
                   autocomplete="url"
                 />
-                <button type="submit">Pack</button>
+                <button type="submit" data-i18n="seller.packButton">Pack</button>
               </div>
-              <p id="link-result" class="form-note">
+              <p id="link-result" class="form-note" data-i18n="seller.formNote">
                 Preview: a reviewed AgentCart card will be created.
               </p>
             </form>
 
             <div class="seller-skill-card">
-              <span>Seller agent command</span>
-              <code>Read https://agentcart.dev/seller-skill.md
+              <span data-i18n="seller.commandLabel">Seller agent command</span>
+              <code id="seller-command" data-i18n="seller.command">Read https://agentcart.dev/seller-skill.md
 and register this product link for AgentCart.</code>
-              <p>Works from Codex, Claude, OpenClaw, or any agent that can read a skill URL.</p>
+              <p data-i18n="seller.commandHelp">Works from Codex, Claude, OpenClaw, or any agent that can read a skill URL.</p>
             </div>
 
             <div id="login" class="login-card">
-              <p>Already registered something?</p>
-              <a href="#">Login to check your cards</a>
+              <div>
+                <p data-i18n="login.prompt">Already registered something?</p>
+                <code id="cli-login-command">npx agentcart login</code>
+              </div>
+              <button type="button" id="copy-login" data-i18n="login.copy">Copy CLI login</button>
             </div>
           </div>
         </section>
 
         <section id="skill" class="skill-grid">
           <div class="skill-copy">
-            <p class="section-kicker">For buyers</p>
-            <h2>Send your shopping agent to AgentCart.</h2>
-            <p>
+            <p class="section-kicker" data-i18n="buyer.kicker">For buyers</p>
+            <h2 data-i18n="buyer.title">Send your shopping agent to AgentCart.</h2>
+            <p data-i18n="buyer.body">
               No app store dance. Give your agent one instruction and it knows
               to ask context questions, review links, and wait before opening a
               purchase URL.
@@ -127,9 +139,9 @@ and register this product link for AgentCart.</code>
               <span></span>
               <strong>skill.md</strong>
             </div>
-            <pre><code id="skill-command">Read https://agentcart.dev/skill.md
+            <pre><code id="skill-command" data-i18n="buyer.command">Read https://agentcart.dev/skill.md
 and use AgentCart whenever I ask what to buy.</code></pre>
-            <button class="copy-button" id="copy-skill" type="button">
+            <button class="copy-button" id="copy-skill" type="button" data-i18n="buyer.copy">
               Copy for my agent
             </button>
           </div>
@@ -137,9 +149,9 @@ and use AgentCart whenever I ask what to buy.</code></pre>
 
         <section id="demo" class="demo-section" aria-labelledby="demo-title">
           <div>
-            <p class="section-kicker">Demo film</p>
-            <h2 id="demo-title">Show the moment an agent shops better.</h2>
-            <p>
+            <p class="section-kicker" data-i18n="demo.kicker">Demo film</p>
+            <h2 id="demo-title" data-i18n="demo.title">Show the moment an agent shops better.</h2>
+            <p data-i18n="demo.body">
               This should become a short video: a buyer asks for a gift, the
               agent asks one smart question, AgentCart checks the link, then the
               buyer approves the purchase path.
@@ -151,8 +163,8 @@ and use AgentCart whenever I ask what to buy.</code></pre>
               <span></span>
             </button>
             <div>
-              <strong>40 sec demo</strong>
-              <p>Buyer asks. Agent checks. Cart opens only when approved.</p>
+              <strong data-i18n="demo.cardLabel">40 sec demo</strong>
+              <p data-i18n="demo.cardBody">Buyer asks. Agent checks. Cart opens only when approved.</p>
             </div>
           </div>
         </section>

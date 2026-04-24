@@ -135,11 +135,44 @@ main {
   color: var(--teal);
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.language-switcher {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.language-switcher button {
+  min-height: 30px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 9px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.language-switcher button[aria-pressed="true"] {
+  color: #071017;
+  background: var(--teal);
+}
+
 .topbar-cta,
 .primary-button,
 .ghost-button,
 .link-form button,
-.copy-button {
+.copy-button,
+.login-card button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -184,12 +217,17 @@ main {
   text-transform: uppercase;
 }
 
-.eyebrow span {
+.eyebrow > span:first-child {
+  flex: 0 0 auto;
   width: 10px;
   height: 10px;
   border-radius: 999px;
   background: var(--coral);
   box-shadow: 0 0 30px var(--coral);
+}
+
+.eyebrow > span:not(:first-child) {
+  min-width: 0;
 }
 
 h1,
@@ -210,8 +248,23 @@ h1 {
 
 h1 span {
   display: block;
+}
+
+.title-cream {
+  color: var(--text);
+}
+
+.title-coral {
   color: var(--coral);
   text-shadow: 0 0 36px rgba(255, 63, 47, 0.3);
+}
+
+html[lang="ko"] h1,
+html[lang="zh"] h1,
+html[lang="ja"] h1 {
+  font-size: clamp(3.25rem, 7.2vw, 6.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.055em;
 }
 
 .hero-subtitle {
@@ -255,7 +308,8 @@ h1 span {
 .ghost-button:hover,
 .topbar-cta:hover,
 .link-form button:hover,
-.copy-button:hover {
+.copy-button:hover,
+.login-card button:hover {
   transform: translateY(-2px);
 }
 
@@ -433,8 +487,16 @@ h2 {
   color: #d9e3ef;
 }
 
-.login-card a {
+.login-card code {
+  display: block;
+  margin-top: 5px;
+  color: var(--teal);
+  font-size: 0.86rem;
+}
+
+.login-card button {
   flex: 0 0 auto;
+  border: 0;
   padding: 10px 14px;
   border-radius: 999px;
   color: #071017;
@@ -599,6 +661,10 @@ code {
     flex-wrap: wrap;
   }
 
+  .topbar-actions {
+    margin-left: auto;
+  }
+
   .topbar nav {
     order: 3;
     width: 100%;
@@ -624,6 +690,17 @@ code {
 }
 
 @media (max-width: 640px) {
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+    order: 4;
+  }
+
+  .language-switcher {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
   .topbar nav {
     overflow-x: auto;
     justify-content: flex-start;
