@@ -1,0 +1,162 @@
+[
+  {
+    "title": "블랙 소가죽 반지갑",
+    "category": "wallet",
+    "originalUrl": "https://link.coupang.com/a/evvpLi",
+    "priceAmount": 69000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "wallet_curator",
+      "displayName": "Wallet Curator"
+    },
+    "bestFor": ["남자 선물", "가죽지갑", "10만원 이하", "실용적인 선물"],
+    "notFor": ["초슬림 지갑 선호", "비건 소재 선호"],
+    "searchKeywords": ["남성 반지갑", "소가죽 지갑", "10만원 이하 선물"],
+    "curationNote": "군더더기 없는 블랙 소가죽 디자인이라 첫 지갑 선물이나 직장인 선물로 무난합니다.",
+    "riskFlags": []
+  },
+  {
+    "title": "브라운 슬림 카드지갑",
+    "category": "wallet",
+    "originalUrl": "https://www.amazon.com/dp/B0CARDWALLET",
+    "priceAmount": 42000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "wallet_curator",
+      "displayName": "Wallet Curator"
+    },
+    "bestFor": ["슬림 지갑 선호", "카드 위주 수납", "가벼운 생일 선물"],
+    "notFor": ["현금 수납 많음", "동전 지갑 필요"],
+    "searchKeywords": ["브라운 카드지갑", "슬림 월렛", "카드 홀더"],
+    "curationNote": "주머니에 부담이 적은 카드 중심 지갑을 찾는 사람에게 어울립니다.",
+    "riskFlags": []
+  },
+  {
+    "title": "선물 포장 남성 장지갑",
+    "category": "wallet",
+    "originalUrl": "https://www.aliexpress.com/item/100500-wallet-gift.html",
+    "priceAmount": 31000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "budget_finder",
+      "displayName": "Budget Finder"
+    },
+    "bestFor": ["예산형 선물", "장지갑 선호", "선물 포장 필요"],
+    "notFor": ["빠른 배송 필요", "브랜드 보증 중시"],
+    "searchKeywords": ["남성 장지갑", "선물 포장 지갑", "알리익스프레스 지갑"],
+    "curationNote": "가격 대비 구성이 좋아 보이지만 해외 배송 일정은 여유를 두는 편이 안전합니다.",
+    "riskFlags": ["delivery_uncertainty"]
+  },
+  {
+    "title": "올리브영 핸드크림 선물 세트",
+    "category": "beauty_gift",
+    "originalUrl": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000201",
+    "priceAmount": 29000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "gift_editor",
+      "displayName": "Gift Editor"
+    },
+    "bestFor": ["부담 없는 선물", "직장 동료 선물", "겨울 보습"],
+    "notFor": ["향 민감", "무향 제품 선호"],
+    "searchKeywords": ["핸드크림 세트", "올리브영 선물", "보습 선물"],
+    "curationNote": "가격대가 편하고 소모품이라 취향 리스크가 비교적 낮은 편입니다.",
+    "riskFlags": []
+  },
+  {
+    "title": "무선 목 어깨 마사지기",
+    "category": "wellness",
+    "originalUrl": "https://link.coupang.com/a/neckShoulderMassager",
+    "priceAmount": 89000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "parent_gift",
+      "displayName": "Parent Gift"
+    },
+    "bestFor": ["부모님 선물", "집에서 휴식", "목 어깨 피로"],
+    "notFor": ["의료기기 기대", "강한 압박 싫어함"],
+    "searchKeywords": ["목 마사지기", "어깨 마사지기", "부모님 선물"],
+    "curationNote": "집에서 가볍게 쓰기 좋은 선물 후보지만 건강 효과 표현은 보수적으로 안내해야 합니다.",
+    "riskFlags": ["health_claim_sensitive"]
+  },
+  {
+    "title": "데스크용 USB-C 허브",
+    "category": "desk_accessory",
+    "originalUrl": "https://www.amazon.com/dp/B0USBCDESK",
+    "priceAmount": 54000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "desk_setup",
+      "displayName": "Desk Setup"
+    },
+    "bestFor": ["노트북 사용자", "재택근무", "책상 정리"],
+    "notFor": ["고전력 독 필요", "썬더볼트 필수"],
+    "searchKeywords": ["USB-C 허브", "노트북 허브", "데스크 셋업"],
+    "curationNote": "HDMI와 USB-A 포트를 함께 쓰는 일반 노트북 사용자에게 실용적인 선택입니다.",
+    "riskFlags": []
+  },
+  {
+    "title": "가벼운 여행용 파우치 6종",
+    "category": "travel",
+    "originalUrl": "https://www.aliexpress.com/item/100500-travel-pouch-set.html",
+    "priceAmount": 18000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "travel_pack",
+      "displayName": "Travel Pack"
+    },
+    "bestFor": ["여행 준비", "캐리어 정리", "가성비 소품"],
+    "notFor": ["즉시 출국", "고급 원단 선호"],
+    "searchKeywords": ["여행 파우치", "캐리어 정리", "파우치 세트"],
+    "curationNote": "여행 전에 짐을 분류하기 좋지만 해외 배송이라 일정 확인이 중요합니다.",
+    "riskFlags": ["delivery_uncertainty"]
+  },
+  {
+    "title": "프리미엄 다이어리 커버",
+    "category": "work_tools",
+    "originalUrl": "https://brand.example/products/diary-cover",
+    "priceAmount": 76000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "work_tools",
+      "displayName": "Work Tools"
+    },
+    "bestFor": ["새해 선물", "업무 기록", "문구 취향"],
+    "notFor": ["디지털 노트만 사용", "가벼운 노트 선호"],
+    "searchKeywords": ["다이어리 커버", "업무 문구", "프리미엄 노트 커버"],
+    "curationNote": "매일 쓰는 문구를 오래 쓰는 타입에게 맞는 직접 브랜드 상품입니다.",
+    "riskFlags": []
+  },
+  {
+    "title": "화이트 무선 충전 스탠드",
+    "category": "desk_accessory",
+    "originalUrl": "https://link.coupang.com/a/whiteChargeStand",
+    "priceAmount": 36000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "desk_setup",
+      "displayName": "Desk Setup"
+    },
+    "bestFor": ["책상 충전", "화이트 데스크", "스마트폰 거치"],
+    "notFor": ["고속 유선 충전 선호", "케이스 호환 불확실"],
+    "searchKeywords": ["무선 충전 스탠드", "화이트 충전기", "데스크 충전"],
+    "curationNote": "책상 위에 세워두고 알림을 보기 쉬운 형태라 데스크 소품 선물로 좋습니다.",
+    "riskFlags": []
+  },
+  {
+    "title": "비건 레더 미니 지갑",
+    "category": "wallet",
+    "originalUrl": "https://brand.example/products/vegan-mini-wallet",
+    "priceAmount": 58000,
+    "currency": "KRW",
+    "curator": {
+      "handle": "wallet_curator",
+      "displayName": "Wallet Curator"
+    },
+    "bestFor": ["비건 소재 선호", "미니백 사용", "가벼운 지갑"],
+    "notFor": ["천연가죽 선호", "현금 수납 많음"],
+    "searchKeywords": ["비건 레더 지갑", "미니 지갑", "동물성 소재 없는 지갑"],
+    "curationNote": "소재 취향이 분명한 사람에게 추천하기 좋은 직접 브랜드 상품입니다.",
+    "riskFlags": []
+  }
+]
