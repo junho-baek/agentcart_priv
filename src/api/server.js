@@ -28,17 +28,29 @@ function sendJson(response, statusCode, body) {
 function readRequestBody(request) {
   return new Promise((resolve, reject) => {
     let body = "";
+    let bodyTooLarge = false;
 
     request.setEncoding("utf8");
     request.on("data", (chunk) => {
+      if (bodyTooLarge) {
+        return;
+      }
+
       body += chunk;
 
       if (body.length > MAX_BODY_BYTES) {
-        reject(new Error("body_too_large"));
-        request.destroy();
+        body = "";
+        bodyTooLarge = true;
       }
     });
-    request.on("end", () => resolve(body));
+    request.on("end", () => {
+      if (bodyTooLarge) {
+        reject(new Error("body_too_large"));
+        return;
+      }
+
+      resolve(body);
+    });
     request.on("error", reject);
   });
 }
@@ -54,7 +66,15 @@ async function parseJsonBody(request) {
 }
 
 function routeParts(pathname) {
-  return pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  try {
+    return pathname.split("/").filter(Boolean).map(decodeURIComponent);
+  } catch (error) {
+    if (error instanceof URIError) {
+      return null;
+    }
+
+    throw error;
+  }
 }
 
 function normalizeSearchQuery(query) {
@@ -63,6 +83,14 @@ function normalizeSearchQuery(query) {
 
 export function createServer({ registryPath } = {}) {
   const activeRegistryPath = registryPath ?? registryPathFor();
+  let feedbackWriteQueue = Promise.resolve();
+
+  function enqueueFeedbackWrite(writeFeedback) {
+    const write = feedbackWriteQueue.then(writeFeedback, writeFeedback);
+    feedbackWriteQueue = write.catch(() => {});
+
+    return write;
+  }
 
   return http.createServer(async (request, response) => {
     response.setHeader("Access-Control-Allow-Origin", "*");
@@ -104,6 +132,11 @@ export function createServer({ registryPath } = {}) {
 
       const parts = routeParts(url.pathname);
 
+      if (parts === null) {
+        sendJson(response, 404, { error: "not_found" });
+        return;
+      }
+
       if (request.method === "GET" && parts.length === 3 && parts[0] === "api" && parts[1] === "cards") {
         const registry = await loadRegistry(activeRegistryPath);
         const cardIdOrSlug = parts[2];
@@ -144,6 +177,11 @@ export function createServer({ registryPath } = {}) {
         try {
           body = await parseJsonBody(request);
         } catch (error) {
+          if (error.message === "body_too_large") {
+            sendJson(response, 413, { error: "body_too_large" });
+            return;
+          }
+
           if (error.message === "invalid_json") {
             sendJson(response, 400, { error: "invalid_json" });
             return;
@@ -161,10 +199,14 @@ export function createServer({ registryPath } = {}) {
           return;
         }
 
-        const registry = await loadRegistry(activeRegistryPath);
-        registry.feedbackEvents = Array.isArray(registry.feedbackEvents) ? registry.feedbackEvents : [];
-        registry.feedbackEvents.push(event);
-        await saveRegistry(activeRegistryPath, registry);
+        await enqueueFeedbackWrite(async () => {
+          const registry = await loadRegistry(activeRegistryPath);
+          registry.feedbackEvents = Array.isArray(registry.feedbackEvents)
+            ? registry.feedbackEvents
+            : [];
+          registry.feedbackEvents.push(event);
+          await saveRegistry(activeRegistryPath, registry);
+        });
 
         sendJson(response, 201, { event });
         return;

@@ -144,6 +144,62 @@ test("feedback POST persists events and invalid input returns 400", async () => 
   });
 });
 
+test("parallel feedback POSTs persist every event", async () => {
+  await withSeededServer(async ({ baseUrl, registryPath }) => {
+    const registry = await loadRegistry(registryPath);
+    const card = registry.cards[0];
+    const feedbackCount = 20;
+    const posts = Array.from({ length: feedbackCount }, (_, index) =>
+      fetchJson(`${baseUrl}/api/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cardId: card.id,
+          curatorHandle: card.curator.handle,
+          helpful: index % 2 === 0,
+          comment: `parallel feedback ${index}`,
+        }),
+      })
+    );
+
+    const results = await Promise.all(posts);
+    const persistedRegistry = await loadRegistry(registryPath);
+
+    assert.deepEqual(
+      results.map(({ response }) => response.status),
+      Array(feedbackCount).fill(201)
+    );
+    assert.equal(persistedRegistry.feedbackEvents.length, feedbackCount);
+    assert.equal(
+      new Set(persistedRegistry.feedbackEvents.map((event) => event.id)).size,
+      feedbackCount
+    );
+  });
+});
+
+test("oversized feedback body returns deterministic JSON 413", async () => {
+  await withSeededServer(async ({ baseUrl }) => {
+    const response = await fetch(`${baseUrl}/api/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "x".repeat(1_000_001),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 413);
+    assert.deepEqual(body, { error: "body_too_large" });
+  });
+});
+
+test("malformed percent-encoded route segments return not found", async () => {
+  await withSeededServer(async ({ baseUrl }) => {
+    const { response, body } = await fetchJson(`${baseUrl}/api/cards/%E0%A4%A`);
+
+    assert.equal(response.status, 404);
+    assert.deepEqual(body, { error: "not_found" });
+  });
+});
+
 test("OPTIONS preflight returns 204 and unknown routes return 404", async () => {
   await withSeededServer(async ({ baseUrl }) => {
     const options = await fetch(`${baseUrl}/api/search`, { method: "OPTIONS" });
