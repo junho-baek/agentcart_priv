@@ -1,6 +1,8 @@
 # AgentCart Landing
 
-Futuristic single-page landing site for AgentCart.
+Single-page landing site for installing the AgentCart open-source shopping skill.
+
+AgentCart's landing page explains the local registry MVP, the agent skill install flow, and the product boundary for commission-link shopping recommendations.
 
 ## Run
 
@@ -19,12 +21,12 @@ npm run build
 
 The production output is written to `web/dist/`.
 
-## CLI Login
+## Registry Demo
 
 ```sh
-npm run agentcart -- login --email creator@example.com
-npm run agentcart -- whoami
-npm run agentcart -- logout
+npm run agentcart -- seed
+npm run serve:registry
+npm run agentcart -- install-skill --target codex
 ```
 
-The local MVP session is stored under `.agentcart/session.json`.
+The registry server defaults to `http://127.0.0.1:8787`, and the installed skill uses that API unless a different registry URL is configured.
