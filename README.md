@@ -1,6 +1,6 @@
 # AgentCart
 
-AgentCart is a commission-link shopping protocol for AI agents. It lets creators register a curator persona and a set of shopping links so AI agents can recommend those products with the creator's taste, context, and required affiliate disclosure.
+AgentCart is a commission-link shopping protocol for AI agents. It lets creators and brands register a curator persona and a set of shopping links so AI agents can recommend those products with the persona's taste, context, and required affiliate disclosure.
 
 Curators register Coupang, Amazon, AliExpress, OliveYoung, self-owned shop links, and direct links with agent-readable context: who the product is best for, who should avoid it, why it is being recommended, the latest known price snapshot, disclosure text, and risk flags. Shopping agents can then recommend products with clear commission disclosure, curator persona context, direct links, reputation/trust temperature, price snapshot context, and policy or fit risk flags before opening any purchase link.
 
@@ -33,6 +33,7 @@ Creator-side pull:
 Consumer-side modes:
 
 - Curator prompt mode: `agentcart-shopping에서 @junho-baek 페르소나로 이번 주 식비 3만원 자취 장바구니 짜줘`
+- Brand persona mode: `agentcart-shopping에서 @nike-running 페르소나로 첫 10km 러닝 준비물 추천해줘`
 - General search mode: `agentcart-shopping에서 자취생 음식 추천해줘`
 
 In general search mode, AgentCart can search across the whole registry, but each result should still reveal the curator/persona behind the recommendation.
@@ -42,7 +43,10 @@ Business model:
 - Free consumer usage.
 - Free curator launch period, e.g. 1 persona and 50 links for the first 3 months.
 - Paid curator tiers for more links, multiple personas, campaign/event prompts, advanced analytics, team accounts, custom domains, and self-owned shop priority links.
-- Brand or merchant tiers for official curator campaigns, attribution, and performance reporting.
+- Brand or merchant tiers for official brand personas, seasonal campaign personas, attribution, and performance reporting.
+- Retail partner tiers for self-owned shop integrations, product catalog sync, and conversion reporting.
+
+Brand personas must be explicit. If a persona represents a brand, store, or sponsored campaign, AgentCart should disclose that relationship, whether the persona prioritizes first-party products, and whether recommendations include or exclude competing products.
 
 ## Local MVP
 
@@ -150,6 +154,7 @@ curl -X POST http://127.0.0.1:8787/api/feedback \
 - AgentCart does not rank by commission rate.
 - AgentCart does not claim current lowest price.
 - AgentCart can show direct monetized links after disclosure.
+- AgentCart must identify brand, merchant, sponsored, or official campaign personas when that context is present.
 - AgentCart opens purchase links only after user approval.
 - AgentCart purchase assist can log in with explicitly authorized `.env.local` Coupang credentials and prepare the cart/checkout page.
 - AgentCart stops at OTP, CAPTCHA, payment password, card entry, address edits, and other sensitive authentication or payment-secret steps. The user enters those directly.
