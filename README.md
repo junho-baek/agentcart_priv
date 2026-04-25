@@ -74,6 +74,19 @@ npm run agentcart -- install-skill --target codex
 npm run serve:registry
 ```
 
+Or ask an AI agent to install the published skill files directly:
+
+```text
+https://github.com/junho-baek/agentcart_priv/tree/main/skills
+이 AgentCart skills 폴더를 Codex/Claude/OpenClaw에 설치해줘.
+```
+
+After installation, users can paste curator prompts such as:
+
+```text
+agentcart-shopping에서 @junho-baek 페르소나로 이번 주 식비 3만원 자취 장바구니 짜줘
+```
+
 ## Skills
 
 - `skills/agentcart-shopping-skill.md`: the curator recommendation skill. It fetches registered cards, shows the commission disclosure first, includes direct links, and speaks through curator persona context such as `junho-baek`.
