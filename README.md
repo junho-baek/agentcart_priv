@@ -31,6 +31,20 @@ npm run agentcart -- install-skill --target codex
 npm run serve:registry
 ```
 
+## Skills
+
+- `skills/agentcart-shopping-skill.md`: the curator recommendation skill. It fetches registered cards, shows the commission disclosure first, includes direct links, and speaks through curator persona context such as `junho-baek`.
+- `skills/agentcart-browser-purchase-assist-skill.md`: the visible browser purchase-assist skill. It opens selected links, can use explicitly authorized `.env.local` Coupang login credentials, adds items to cart, advances to checkout, and stops at payment password, OTP, CAPTCHA, card, address, and other sensitive gates.
+
+The curator-persona model was inspired by `openclone`: a persona/room style experience where a user can talk with a recognizable point of view, then receive useful actions from that context. AgentCart adapts that idea for commerce by attaching persona voice, product cards, affiliate disclosure, and purchase-assist handoff to the same curator experience.
+
+Skill-side gaps still not shipped:
+
+- `install-skill` currently writes the shopping skill only; the purchase-assist skill is checked in as a canonical skill file, but does not yet have a CLI installer target.
+- There is no separate curator persona builder skill yet.
+- There is no curator admin/revenue analytics skill yet.
+- Browser purchase assist is written for Codex in-app browser and `browser-use:browser`; other agent runtimes will need adapter notes.
+
 ## Expected Demo Output
 
 ```text

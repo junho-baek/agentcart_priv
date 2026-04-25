@@ -114,3 +114,17 @@ test("readCanonicalSkill matches generated generic skill to avoid drift", async 
 
   assert.equal(canonical, makeSkillMarkdown({ target: "generic" }));
 });
+
+test("checked-in purchase assist skill documents browser and payment boundaries", async () => {
+  const content = await readFile(
+    new URL("../skills/agentcart-browser-purchase-assist-skill.md", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(content, /^name: agentcart-browser-purchase-assist/m);
+  assert.match(content, /browser-use:browser/);
+  assert.match(content, /Capture: get a visible screenshot first/);
+  assert.match(content, /Coupang Payment Password Gate/);
+  assert.match(content, /Do not read `AGENTCART_COUPANG_PAYMENT_PASSWORD`/);
+  assert.match(content, /Do not click keypad digits/);
+});
