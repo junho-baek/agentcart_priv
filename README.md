@@ -1,14 +1,12 @@
 # AgentCart
 
-AgentCart is a commission-link shopping protocol for AI agents.
+AgentCart is a commission-link shopping protocol for AI agents. It lets creators register a curator persona and a set of shopping links so AI agents can recommend those products with the creator's taste, context, and required affiliate disclosure.
 
-Curators register Coupang, Amazon, AliExpress, OliveYoung, and direct links with agent-readable context: who the product is best for, who it is not for, why it is being recommended, the latest known price snapshot, disclosure text, and risk flags. Shopping agents can then recommend products with clear commission disclosure, curator persona context, direct links, reputation/trust temperature, price snapshot context, and policy or fit risk flags before opening any purchase link.
+Curators register Coupang, Amazon, AliExpress, OliveYoung, self-owned shop links, and direct links with agent-readable context: who the product is best for, who should avoid it, why it is being recommended, the latest known price snapshot, disclosure text, and risk flags. Shopping agents can then recommend products with clear commission disclosure, curator persona context, direct links, reputation/trust temperature, price snapshot context, and policy or fit risk flags before opening any purchase link.
 
-The core user experience is not "AI search." It is a copy-paste curator funnel: a creator shares one natural-language prompt, the user pastes it into Codex, Claude, OpenClaw, or another AI agent, and AgentCart loads that creator's curator persona, event context, and registered product links.
+The core user experience is not a destination marketplace. It is a copy-paste curator funnel: a creator shares one natural-language prompt, the user pastes it into Codex, Claude, OpenClaw, or another AI agent, and AgentCart loads that creator's persona, event context, and registered product links.
 
-In short: register here, and your curator persona can promote your links for you inside the user's own AI agent.
-
-AgentCart still supports general product search. But the growth loop is creator-led distribution, closer to Linktree or Inflearn-style profile links than a destination marketplace: "copy this prompt to talk to my shopping persona."
+AgentCart still supports general product search, but the primary growth loop is creator-led distribution. The product is closer to an agent-native Linktree or Inflearn-style profile link than a search engine: creators distribute prompts, users start conversations, and the agent turns the curator's taste into a shoppable recommendation.
 
 ```text
 제가 추천하는 자취템은 AgentCart에 넣어뒀어요.
@@ -21,20 +19,23 @@ The agent turns the curator's taste into a small set of registered product cards
 
 ## Growth Model
 
-AgentCart combines agent commerce with the creator economy.
+AgentCart combines agent commerce with the creator economy. Consumers should be able to use curator personas and general product search freely; they are already viewing disclosed affiliate or merchant recommendations. The paying customer is the curator, brand, or merchant that wants their taste, campaign, or product catalog to be callable from AI agents.
 
-- Consumers should not pay to see what is effectively a disclosed ad or affiliate recommendation.
-- Consumers should be able to call curator personas and run general product searches freely.
-- Curators pay because they want to be discoverable inside `agentcart-shopping`.
-- The primary distribution unit is not a landing page. It is a copy-paste prompt that contains the curator id, event, intent, and shopping context.
-- General product search can discover products across the whole registry, but every result should reveal the curator/persona behind the recommendation.
+The primary distribution unit is not a landing page. It is a copy-paste prompt that contains the curator id, event, intent, and shopping context.
 
-Creator desire:
+Creator-side pull:
 
 ```text
 나도 agentcart-shopping에서 검색되는 큐레이터가 되고 싶다.
 내 인스타 링크가 아니라 내 페르소나를 사람들이 부르게 만들고 싶다.
 ```
+
+Consumer-side modes:
+
+- Curator prompt mode: `agentcart-shopping에서 @junho-baek 페르소나로 이번 주 식비 3만원 자취 장바구니 짜줘`
+- General search mode: `agentcart-shopping에서 자취생 음식 추천해줘`
+
+In general search mode, AgentCart can search across the whole registry, but each result should still reveal the curator/persona behind the recommendation.
 
 Business model:
 
