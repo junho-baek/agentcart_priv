@@ -151,9 +151,34 @@ test("formatRecommendationResponse discloses commission and includes open and cu
     )
   );
   assert.match(response, /\[쿠팡 파트너스\] 블랙 소가죽 반지갑/);
-  assert.match(response, /셀러룸 보기: agentcart curator:room wallet_curator/);
+  assert.match(response, /링크: https:\/\/link\.coupang\.com\/a\/evvpLi/);
+  assert.match(response, /큐레이터 페르소나: wallet_curator \(@wallet_curator\)/);
   assert.match(response, /열기 전 확인: agentcart open 블랙-소가죽-반지갑/);
-  assert.match(response, /카드 수납이 많고 선물 포장이 무난함/);
+  assert.match(response, /큐레이터 한마디: 카드 수납이 많고 선물 포장이 무난함/);
+});
+
+test("formatRecommendationResponse uses curator persona one-liners when available", () => {
+  const [wallet] = searchCards("10만원 이하 leather wallet 추천해줘!", fixtureCards(), {
+    budgetAmount: 100000,
+  });
+
+  const response = formatRecommendationResponse(
+    [wallet],
+    "10만원 이하 leather wallet 추천해줘!",
+    {
+      curatorPersonas: [
+        {
+          handle: "wallet_curator",
+          personaName: "지갑 선물 큐레이터",
+          defaultOneLiner: "처음 선물은 취향보다 실패 확률을 먼저 줄이는 게 좋아요.",
+        },
+      ],
+    }
+  );
+
+  assert.match(response, /큐레이터 한마디: 처음 선물은 취향보다 실패 확률을 먼저 줄이는 게 좋아요\./);
+  assert.match(response, /추천 이유: 카드 수납이 많고 선물 포장이 무난함/);
+  assert.match(response, /큐레이터 페르소나: 지갑 선물 큐레이터 \(@wallet_curator\)/);
 });
 
 test("empty search and formatting return a clear empty state with disclosure", () => {

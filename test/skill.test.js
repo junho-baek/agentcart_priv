@@ -16,7 +16,7 @@ test("makeSkillMarkdown includes skill trigger frontmatter and AgentCart positio
   assert.match(markdown, /^---\nname: agentcart-shopping\n/m);
   assert.match(
     markdown,
-    /description: Use when the user asks for product recommendations, gift ideas, shopping comparison, affiliate-link shopping decisions, or curator rooms/
+    /description: Use when the user asks for product recommendations, gift ideas, shopping comparison, affiliate-link shopping decisions, curator personas, or curator rooms/
   );
   assert.match(markdown, /AgentCart는 커미션 링크 중심의 쇼핑 프로토콜입니다\./);
   assert.match(markdown, /최종 프론트엔드는 에이전트 채팅입니다\./);
@@ -37,7 +37,9 @@ test("makeSkillMarkdown includes required API reference and recommendation field
   assert.match(markdown, /who should avoid it/);
   assert.match(markdown, /platform/);
   assert.match(markdown, /price snapshot/);
-  assert.match(markdown, /curator handle\/room/);
+  assert.match(markdown, /curator handle\/persona/);
+  assert.match(markdown, /Direct monetized link from the card/);
+  assert.match(markdown, /큐레이터 한마디/);
 });
 
 test("makeSkillMarkdown closes behavioral guardrail loopholes", () => {
@@ -53,7 +55,9 @@ test("makeSkillMarkdown closes behavioral guardrail loopholes", () => {
   assert.match(markdown, /ask for explicit approval before opening/);
   assert.match(markdown, /Require a separate affirmative confirmation/);
   assert.doesNotMatch(markdown, /unless they have already clearly approved/);
-  assert.match(markdown, /Curator rooms are curated link collections, not seller verification/);
+  assert.match(markdown, /Direct links may be shown in chat after disclosure/);
+  assert.match(markdown, /Curator personas and rooms are curated link collections, not seller verification/);
+  assert.match(markdown, /Prefer curator persona language over "curator room" language/);
   assert.match(markdown, /Do not claim the lowest price/);
   assert.match(markdown, /Do not hide the affiliate relationship/);
   assert.match(markdown, /Do not claim current availability unless the card explicitly says so/);

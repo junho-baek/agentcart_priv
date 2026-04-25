@@ -141,7 +141,9 @@ export function createServer({ registryPath, allowedOrigins = DEFAULT_ALLOWED_OR
 
         sendJson(response, 200, {
           disclosure: DISCLOSURE,
-          responseText: formatRecommendationResponse(cards, query),
+          responseText: formatRecommendationResponse(cards, query, {
+            curatorPersonas: registry.curatorPersonas,
+          }),
           results: cards.map((card) => ({ card })),
         }, corsHeaders);
         return;

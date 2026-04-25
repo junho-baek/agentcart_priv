@@ -26,6 +26,12 @@ function isPresent(value) {
   return String(value ?? "").trim().length > 0;
 }
 
+function normalizeHandle(handle) {
+  return String(handle ?? "")
+    .trim()
+    .replace(/^@+/, "");
+}
+
 function expandTokens(tokens) {
   const expandedTokens = new Set(tokens);
 
@@ -181,7 +187,33 @@ export function searchCards(queryOrCards, cardsOrQuery, context) {
     .map(({ card }) => card);
 }
 
-export function formatRecommendationResponse(cards, query = "") {
+function curatorPersonaFor(card, curatorPersonas = []) {
+  const handle = normalizeHandle(card?.curator?.handle);
+
+  return (Array.isArray(curatorPersonas) ? curatorPersonas : []).find(
+    (persona) => normalizeHandle(persona?.handle) === handle
+  );
+}
+
+function curatorOneLinerFor(card, persona) {
+  if (isPresent(card.curatorOneLiner)) {
+    return card.curatorOneLiner;
+  }
+
+  const categoryOneLiner = persona?.categoryOneLiners?.[card.category];
+
+  if (isPresent(categoryOneLiner)) {
+    return categoryOneLiner;
+  }
+
+  if (isPresent(persona?.defaultOneLiner)) {
+    return persona.defaultOneLiner;
+  }
+
+  return card.curationNote;
+}
+
+export function formatRecommendationResponse(cards, query = "", options = {}) {
   const lines = [COMMISSION_DISCLOSURE];
 
   if (!Array.isArray(cards) || cards.length === 0) {
@@ -192,6 +224,7 @@ export function formatRecommendationResponse(cards, query = "") {
   lines.push(`검색어: ${query}`);
 
   cards.forEach((card, index) => {
+    const persona = curatorPersonaFor(card, options.curatorPersonas);
     const platformLabel = card.platform === "coupang" ? "[쿠팡 파트너스] " : "";
     const price =
       Number.isFinite(Number(card.priceAmount)) && isPresent(card.currency)
@@ -200,12 +233,20 @@ export function formatRecommendationResponse(cards, query = "") {
 
     lines.push("");
     lines.push(`${index + 1}. ${platformLabel}${card.title}${price}`);
+    lines.push(`링크: ${card.originalUrl}`);
 
-    if (isPresent(card.curationNote)) {
+    const curatorOneLiner = curatorOneLinerFor(card, persona);
+    if (isPresent(curatorOneLiner)) {
+      lines.push(`큐레이터 한마디: ${curatorOneLiner}`);
+    }
+
+    if (isPresent(card.curationNote) && card.curationNote !== curatorOneLiner) {
       lines.push(`추천 이유: ${card.curationNote}`);
     }
 
-    lines.push(`셀러룸 보기: agentcart curator:room ${card.curator.handle}`);
+    lines.push(
+      `큐레이터 페르소나: ${persona?.personaName ?? card.curator?.displayName ?? card.curator.handle} (@${card.curator.handle})`
+    );
     lines.push(`열기 전 확인: agentcart open ${card.slug}`);
   });
 

@@ -14,6 +14,23 @@ function normalizeHandle(handle) {
     .replace(/^@+/, "");
 }
 
+export function getCuratorPersona(registry, handle) {
+  const normalizedHandle = normalizeHandle(handle);
+
+  if (!normalizedHandle) {
+    return null;
+  }
+
+  const personas = Array.isArray(registry?.curatorPersonas)
+    ? registry.curatorPersonas
+    : [];
+
+  return (
+    personas.find((persona) => normalizeHandle(persona?.handle) === normalizedHandle) ??
+    null
+  );
+}
+
 function normalizeList(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -118,10 +135,21 @@ export function getCuratorRoom(registry, handle) {
     (event) => normalizeHandle(event?.curatorHandle) === normalizedHandle
   );
   const firstCard = curatorCards[0];
+  const persona = getCuratorPersona(registry, normalizedHandle);
 
   return {
     handle: normalizedHandle,
-    displayName: firstCard.curator?.displayName ?? normalizedHandle,
+    displayName: persona?.displayName ?? firstCard.curator?.displayName ?? normalizedHandle,
+    persona: persona
+      ? {
+          personaName: persona.personaName,
+          tagline: persona.tagline,
+          greeting: persona.greeting,
+          voiceTraits: normalizeList(persona.voiceTraits),
+          curationPrinciples: normalizeList(persona.curationPrinciples),
+          defaultOneLiner: persona.defaultOneLiner,
+        }
+      : undefined,
     roomSlug: normalizedHandle,
     trustTemperature: calculateTrustTemperature({
       cards: curatorCards,

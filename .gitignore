@@ -4,3 +4,4 @@ dist/
 web/dist/
 .agent-commerce/
 .agentcart/
+.env.local

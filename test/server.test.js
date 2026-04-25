@@ -5,7 +5,7 @@ import { join } from "node:path";
 import test from "node:test";
 
 import { createServer } from "../src/api/server.js";
-import { loadRegistry, seedRegistry } from "../src/registry/store.js";
+import { loadRegistry, saveRegistry, seedRegistry } from "../src/registry/store.js";
 
 async function withSeededServer(run) {
   const tempDir = await mkdtemp(join(tmpdir(), "agentcart-server-"));
@@ -59,7 +59,9 @@ test("search returns top card wrappers, disclosure, and CLI instructions", async
     assert.ok(body.results[0].card.title);
     assert.match(body.disclosure, /커미션 링크/);
     assert.match(body.responseText, /커미션 링크/);
-    assert.match(body.responseText, /셀러룸 보기: agentcart curator:room/);
+    assert.match(body.responseText, /링크: https?:\/\//);
+    assert.match(body.responseText, /큐레이터 한마디:/);
+    assert.match(body.responseText, /큐레이터 페르소나:/);
     assert.match(body.responseText, /열기 전 확인: agentcart open/);
   });
 });
@@ -103,6 +105,34 @@ test("curator room route succeeds for seed curators and reports missing curators
     assert.ok(found.body.room.cards.length > 0);
     assert.equal(missing.response.status, 404);
     assert.deepEqual(missing.body, { error: "curator_not_found" });
+  });
+});
+
+test("curator route includes seeded Junho Baek persona when matching cards exist", async () => {
+  await withSeededServer(async ({ baseUrl, registryPath }) => {
+    const registry = await loadRegistry(registryPath);
+    registry.cards.push({
+      id: "junho-grocery",
+      slug: "junho-grocery",
+      title: "자취생 테스트 식품",
+      platform: "coupang",
+      category: "grocery",
+      originalUrl: "https://link.coupang.com/a/test",
+      curator: { handle: "junho-baek", displayName: "junho-baek" },
+      bestFor: ["자취생 음식"],
+      notFor: ["조리 싫어함"],
+      curationNote: "자취생 기본 식품",
+      disclosure: "구매 시 수수료를 받을 수 있습니다.",
+      riskFlags: [],
+    });
+    await saveRegistry(registryPath, registry);
+
+    const found = await fetchJson(`${baseUrl}/api/curators/junho-baek`);
+
+    assert.equal(found.response.status, 200);
+    assert.equal(found.body.room.displayName, "백준호");
+    assert.equal(found.body.room.persona.personaName, "자취생 생존 큐레이터 백준호");
+    assert.match(found.body.room.persona.defaultOneLiner, /생활 유지/);
   });
 });
 

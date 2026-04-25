@@ -194,7 +194,9 @@ async function runSearch(args, { workDir, stdout }) {
   }
 
   const cards = searchCards(query, registry.cards, context);
-  stdout(formatRecommendationResponse(cards, query));
+  stdout(formatRecommendationResponse(cards, query, {
+    curatorPersonas: registry.curatorPersonas,
+  }));
 
   return 0;
 }
@@ -251,6 +253,12 @@ async function runCuratorRoom(args, { workDir, stdout, stderr }) {
 
   stdout(`@${room.handle}`);
   stdout(room.displayName);
+  if (room.persona?.personaName) {
+    stdout(room.persona.personaName);
+  }
+  if (room.persona?.tagline) {
+    stdout(room.persona.tagline);
+  }
   stdout(`큐레이터 온도: ${room.trustTemperature}`);
   stdout("");
 

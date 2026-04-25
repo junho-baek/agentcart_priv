@@ -19,6 +19,7 @@ test("createEmptyRegistry returns the initial registry shape with matching times
   assert.deepEqual(createEmptyRegistry(timestamp), {
     version: 1,
     cards: [],
+    curatorPersonas: [],
     feedbackEvents: [],
     recommendationEvents: [],
     clickEvents: [],
@@ -135,7 +136,18 @@ test("seedRegistry installs checked-in inventory", async () => {
     assert.ok(platforms.has("direct"));
     assert.ok(riskFlags.has("delivery_uncertainty"));
     assert.ok(riskFlags.has("health_claim_sensitive"));
+    assert.ok(
+      registry.curatorPersonas.some(
+        (persona) =>
+          persona.handle === "junho-baek" &&
+          persona.personaName === "자취생 생존 큐레이터 백준호"
+      )
+    );
     assert.equal(persistedRegistry.cards.length, registry.cards.length);
+    assert.equal(
+      persistedRegistry.curatorPersonas.length,
+      registry.curatorPersonas.length
+    );
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }
@@ -183,6 +195,9 @@ test("seedRegistry preserves local cards and events while upserting seed cards",
     assert.equal(reseededRegistry.feedbackEvents[0].id, "fb_local_card_20260424000000");
     assert.deepEqual(reseededRegistry.recommendationEvents, [{ id: "rec_existing" }]);
     assert.deepEqual(reseededRegistry.clickEvents, [{ id: "click_existing" }]);
+    assert.ok(
+      reseededRegistry.curatorPersonas.some((persona) => persona.handle === "junho-baek")
+    );
 
     const reseededSeedCards = reseededRegistry.cards.filter(
       (card) => card.slug === existingSeedCard.slug

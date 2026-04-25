@@ -8,6 +8,7 @@ const SEED_CREATED_AT = "2026-04-24T00:00:00.000Z";
 const MODULE_DIR = dirname(fileURLToPath(import.meta.url));
 const PROJECT_DIR = join(MODULE_DIR, "..", "..");
 const SEED_CARDS_PATH = join(PROJECT_DIR, "data", "seed-cards.json");
+const SEED_CURATOR_PERSONAS_PATH = join(PROJECT_DIR, "data", "seed-curator-personas.json");
 
 function normalizeList(value) {
   if (Array.isArray(value)) {
@@ -62,11 +63,38 @@ export function createEmptyRegistry(now = new Date().toISOString()) {
   return {
     version: 1,
     cards: [],
+    curatorPersonas: [],
     feedbackEvents: [],
     recommendationEvents: [],
     clickEvents: [],
     createdAt: now,
     updatedAt: now,
+  };
+}
+
+function normalizeHandle(handle) {
+  return String(handle ?? "")
+    .trim()
+    .replace(/^@+/, "");
+}
+
+function createStoredCuratorPersona(input, createdAt) {
+  return {
+    handle: normalizeHandle(input.handle),
+    displayName: String(input.displayName ?? "").trim(),
+    personaName: String(input.personaName ?? "").trim(),
+    tagline: String(input.tagline ?? "").trim(),
+    greeting: String(input.greeting ?? "").trim(),
+    voiceTraits: normalizeList(input.voiceTraits),
+    curationPrinciples: normalizeList(input.curationPrinciples),
+    defaultOneLiner: String(input.defaultOneLiner ?? "").trim(),
+    categoryOneLiners:
+      input.categoryOneLiners && typeof input.categoryOneLiners === "object"
+        ? input.categoryOneLiners
+        : {},
+    disclosureText: String(input.disclosureText ?? "").trim(),
+    createdAt: input.createdAt ?? createdAt,
+    updatedAt: input.updatedAt ?? createdAt,
   };
 }
 
@@ -128,6 +156,9 @@ export async function addCard(path, input) {
 export async function seedRegistry(path = registryPathFor(), options = {}) {
   const seedCards =
     options.seedItems ?? JSON.parse(await readFile(SEED_CARDS_PATH, "utf8"));
+  const seedCuratorPersonas =
+    options.seedCuratorPersonas ??
+    JSON.parse(await readFile(SEED_CURATOR_PERSONAS_PATH, "utf8"));
   const validatedSeedCards = seedCards.map((seedCard, index) => {
     const card = createStoredCard(seedCard, SEED_CREATED_AT);
     const { ok, errors } = validateCard(card);
@@ -141,6 +172,10 @@ export async function seedRegistry(path = registryPathFor(), options = {}) {
   const registry = await loadRegistry(path);
   const existingCards = Array.isArray(registry.cards) ? registry.cards : [];
   const cards = [...existingCards];
+  const existingCuratorPersonas = Array.isArray(registry.curatorPersonas)
+    ? registry.curatorPersonas
+    : [];
+  const curatorPersonas = [...existingCuratorPersonas];
 
   for (const seedCard of validatedSeedCards) {
     const existingIndex = cards.findIndex(
@@ -163,6 +198,27 @@ export async function seedRegistry(path = registryPathFor(), options = {}) {
   }
 
   registry.cards = cards;
+  for (const seedCuratorPersona of seedCuratorPersonas.map((persona) =>
+    createStoredCuratorPersona(persona, SEED_CREATED_AT)
+  )) {
+    const existingIndex = curatorPersonas.findIndex(
+      (persona) => normalizeHandle(persona.handle) === seedCuratorPersona.handle
+    );
+
+    if (existingIndex === -1) {
+      curatorPersonas.push(seedCuratorPersona);
+      continue;
+    }
+
+    const existingPersona = curatorPersonas[existingIndex];
+    curatorPersonas[existingIndex] = {
+      ...seedCuratorPersona,
+      createdAt: existingPersona.createdAt ?? seedCuratorPersona.createdAt,
+      updatedAt: nextTimestampAfter(existingPersona.updatedAt ?? existingPersona.createdAt),
+    };
+  }
+
+  registry.curatorPersonas = curatorPersonas;
   registry.feedbackEvents = Array.isArray(registry.feedbackEvents)
     ? registry.feedbackEvents
     : [];
