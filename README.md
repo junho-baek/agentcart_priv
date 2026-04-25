@@ -199,10 +199,16 @@ AGENTCART_COUPANG_PAYMENT_PASSWORD=
 
 ## Later
 
-- Hosted DB.
+- Hosted creator and brand curator DB.
+- Curator persona registry for creator, brand, merchant, and campaign personas.
+- Curating link management DB for affiliate links, self-owned shop links, campaign links, and product metadata.
+- CLI tools for curator registration, persona updates, link import, link validation, and campaign prompt generation.
+- Registry API for curator/persona lookup, product card search, link attribution, feedback, and conversion events.
+- Creator registration skill for Codex, Claude, and OpenClaw, including MCP or skill-based onboarding.
+- Persona injection API so third-party agents can load a curator persona, curation principles, campaign context, disclosure policy, and allowed product links.
+- Brand disclosure policy fields for official brand status, sponsored campaigns, first-party product priority, and competitor inclusion policy.
 - Vector search recall.
 - LLM reranking/evals.
-- Curator accounts.
-- Curator persona builder.
 - Affiliate postbacks.
 - Buyer purchase history with explicit consent.
+- No creator admin website in the first version. Use CLI, API, and skills first; build a web console after the registration and recommendation workflows are proven.
