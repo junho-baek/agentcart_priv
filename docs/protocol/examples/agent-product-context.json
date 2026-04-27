@@ -1,0 +1,44 @@
+{
+  "kind": "AgentProductContext",
+  "contextId": "context-junho-grocery-001",
+  "product": {
+    "title": "너구리 얼큰한맛 120g 5개",
+    "platform": "coupang",
+    "category": "grocery",
+    "priceSnapshot": "4,500 KRW"
+  },
+  "links": {
+    "originalUrl": "https://link.coupang.com/a/evFgBR",
+    "relationshipType": "affiliate"
+  },
+  "recommendationContext": {
+    "curationNote": "보관이 쉽고 빠르게 한 끼를 해결할 수 있어 자취생 야식이나 비상식량 후보로 좋습니다.",
+    "curatorOneLiner": "자취생 식품은 멋진 요리보다 반복 가능한 한 끼 루프를 먼저 만들어야 해요.",
+    "searchKeywords": ["자취생 라면", "비상식량", "간편식"]
+  },
+  "recommender": {
+    "handle": "junho-baek",
+    "displayName": "백준호",
+    "personaName": "자취생 생존 큐레이터 백준호",
+    "commercialRole": "affiliate_publisher",
+    "adviceMode": "insight_first"
+  },
+  "disclosure": {
+    "relationshipType": "affiliate",
+    "requiredDisclosureText": "구매 시 링크 등록자가 쿠팡 파트너스 활동에 따른 일정액의 수수료를 받을 수 있습니다.",
+    "firstPartyPriority": false,
+    "competitorInclusionPolicy": "may_include"
+  },
+  "fitRules": {
+    "bestFor": ["자취생 음식", "비상식량", "야식", "10분 식사"],
+    "notFor": ["라면 섭취 제한", "나트륨 민감", "조리 자체를 원하지 않음"]
+  },
+  "risk": {
+    "riskFlags": ["nutrition_balance"],
+    "prohibitedClaims": ["lowest_price", "live_stock", "seller_verified", "medical_or_health_effect"]
+  },
+  "allowedActions": ["explain", "compare_registered_cards", "show_link_after_disclosure", "ask_before_opening", "handoff_to_purchase_assist"],
+  "freshness": {
+    "sourceUpdatedAt": "2026-04-28T00:00:00.000Z"
+  }
+}

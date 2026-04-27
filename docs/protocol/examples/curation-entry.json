@@ -1,0 +1,30 @@
+{
+  "kind": "CurationEntry",
+  "id": "entry-junho-grocery-001",
+  "title": "너구리 얼큰한맛 120g 5개",
+  "originalUrl": "https://link.coupang.com/a/evFgBR",
+  "platform": "coupang",
+  "category": "grocery",
+  "curator": {
+    "handle": "junho-baek",
+    "displayName": "백준호"
+  },
+  "campaignHandle": "starter-grocery-loop",
+  "priceSnapshot": {
+    "amount": 4500,
+    "currency": "KRW",
+    "observedAt": "2026-04-28T00:00:00.000Z"
+  },
+  "bestFor": ["자취생 음식", "비상식량", "야식", "10분 식사"],
+  "notFor": ["라면 섭취 제한", "나트륨 민감", "조리 자체를 원하지 않음"],
+  "searchKeywords": ["자취생 라면", "비상식량", "간편식"],
+  "curationNote": "보관이 쉽고 빠르게 한 끼를 해결할 수 있어 자취생 야식이나 비상식량 후보로 좋습니다.",
+  "curatorOneLiner": "자취생 식품은 멋진 요리보다 반복 가능한 한 끼 루프를 먼저 만들어야 해요.",
+  "claimNotes": ["가격과 재고는 실시간 보장하지 않습니다."],
+  "riskFlags": ["nutrition_balance"],
+  "disclosureHint": "구매 시 링크 등록자가 쿠팡 파트너스 활동에 따른 일정액의 수수료를 받을 수 있습니다.",
+  "sourceMetadata": {
+    "submittedBy": "junho-baek",
+    "submittedAt": "2026-04-28T00:00:00.000Z"
+  }
+}
