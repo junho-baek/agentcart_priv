@@ -128,3 +128,16 @@ test("checked-in purchase assist skill documents browser and payment boundaries"
   assert.match(content, /Do not read `AGENTCART_COUPANG_PAYMENT_PASSWORD`/);
   assert.match(content, /Do not click keypad digits/);
 });
+
+test("checked-in curator registration skill documents protocol structures and disclosure", async () => {
+  const content = await readFile(
+    new URL("../skills/agentcart-curator-registration-skill.md", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(content, /^name: agentcart-curator-registration/m);
+  assert.match(content, /CurationEntry/);
+  assert.match(content, /RecommenderPersona/);
+  assert.match(content, /Commercial actor persona/);
+  assert.match(content, /Do not hide brand, sponsor, affiliate, or merchant relationships/);
+});

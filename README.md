@@ -87,17 +87,32 @@ After installation, users can paste curator prompts such as:
 agentcart-shopping에서 @junho-baek 페르소나로 이번 주 식비 3만원 자취 장바구니 짜줘
 ```
 
+## Commerce Context Protocol
+
+AgentCart's protocol layer separates curator registration data from agent-facing product context. See `docs/protocol/commerce-context-protocol.md` for the first reference draft and `docs/protocol/examples/` for `CurationEntry`, `RecommenderPersona`, and `AgentProductContext` examples.
+
+Inspect protocol objects locally:
+
+```sh
+npm run agentcart -- protocol:context <slug-or-id>
+npm run agentcart -- protocol:persona <handle>
+npm run agentcart -- protocol:validate docs/protocol/examples/agent-product-context.json
+```
+
+The checked-in `skills/agentcart-curator-registration-skill.md` draft defines how creators, brands, merchants, and campaigns should prepare curator personas and product links before `agentcart-shopping` recommends them.
+
 ## Skills
 
 - `skills/agentcart-shopping-skill.md`: the curator recommendation skill. It fetches registered cards, shows the commission disclosure first, includes direct links, and speaks through curator persona context such as `junho-baek`.
 - `skills/agentcart-browser-purchase-assist-skill.md`: the visible browser purchase-assist skill. It opens selected links, can use explicitly authorized `.env.local` Coupang login credentials, adds items to cart, advances to checkout, and stops at payment password, OTP, CAPTCHA, card, address, and other sensitive gates.
+- `skills/agentcart-curator-registration-skill.md`: the future creator, brand, merchant, and campaign registration skill. It drafts `CurationEntry`, `RecommenderPersona`, disclosure policy, and agent-facing context while keeping commercial relationships explicit.
 
 The curator-persona model was inspired by `openclone`: a persona/room style experience where a user can talk with a recognizable point of view, then receive useful actions from that context. AgentCart adapts that idea for commerce by attaching persona voice, product cards, affiliate disclosure, and purchase-assist handoff to the same curator experience.
 
 Skill-side gaps still not shipped:
 
 - `install-skill` currently writes the shopping skill only; the purchase-assist skill is checked in as a canonical skill file, but does not yet have a CLI installer target.
-- There is no separate curator persona builder skill yet.
+- The curator registration skill is a checked-in draft, but does not yet have a CLI installer target.
 - There is no curator admin/revenue analytics skill yet.
 - Browser purchase assist is written for Codex in-app browser and `browser-use:browser`; other agent runtimes will need adapter notes.
 
