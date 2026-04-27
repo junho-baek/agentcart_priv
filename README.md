@@ -66,6 +66,22 @@ The intended service flow is:
 registration skill -> AgentCartRegistrationDraft -> register:draft or POST /api/register-draft -> hosted registry API -> operational DB
 ```
 
+## UGC Campaign Demo
+
+The first demo wedge is not "more product links." It is a creator post follow-up funnel:
+
+```text
+Post CTA:
+Want to adapt this routine to your skin type and budget?
+Chat with my skincare persona.
+
+Paste into Codex/Claude/OpenClaw:
+agentcart-shopping에서 @maya-glow 페르소나로 barrier-repair-under-60 캠페인 추천해줘.
+My skin is dry, fragrance-sensitive, and my budget is $60.
+```
+
+AgentCart loads `@maya-glow`, scopes recommendations to `barrier-repair-under-60`, shows affiliate disclosure, picks up to 3 products, and surfaces skincare safety notes such as patch testing and no medical claims.
+
 ## Local MVP
 
 Use Node v24, then install dependencies and seed the local JSON registry:
@@ -143,7 +159,7 @@ Skill-side gaps still not shipped:
 ## Expected Demo Output
 
 ```text
-Seeded 13 AgentCart cards
+Seeded 14 AgentCart cards
 
 아래 추천에는 커미션 링크가 포함될 수 있으며, 구매 시 링크 등록자가 일정액의 수수료를 받을 수 있습니다.
 

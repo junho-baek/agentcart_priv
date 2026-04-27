@@ -68,6 +68,20 @@ The importer upserts personas by handle and cards by slug. It still validates ea
 
 Free beta entries should not assume global search exposure. The default service path is curator-scoped lookup from copy-paste prompts, while global discovery should require later review, an approved tier, or explicit publication policy.
 
+## Campaign Context
+
+`campaignHandle` connects the creator post, the copy-paste prompt CTA, and the subset of product cards that should be considered together. It is a stable kebab-case id, such as `barrier-repair-under-60`, not a marketing headline.
+
+Agents should treat a prompt that names both a curator and a campaign as curator-scoped plus campaign-scoped. For example, `@maya-glow barrier-repair-under-60` should first load the Maya Glow persona, then prefer cards whose `campaignHandle` matches before falling back to broader skincare search.
+
+Campaign context should carry:
+
+- the creator or brand persona responsible for the recommendation
+- the campaign handle copied from the post CTA
+- the product cards registered for that campaign
+- disclosure text and commercial relationship
+- `claimNotes` and `riskFlags`, especially for skincare, wellness, supplements, finance, or other health-sensitive categories
+
 ## AgentProductContext
 
 `AgentProductContext` is the agent-facing object. It is stricter than `CurationEntry` and should contain everything an agent needs to explain a recommendation without inventing claims.
