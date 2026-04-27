@@ -12,6 +12,7 @@ import {
 import { formatRecommendationResponse, searchCards } from "../registry/recommend.js";
 import {
   addCard,
+  addCuratorPersona,
   loadRegistry,
   registryPathFor,
   seedRegistry,
@@ -27,6 +28,7 @@ const VALUE_FLAGS = new Set([
   "--disclosure",
   "--display-name",
   "--email",
+  "--file",
   "--host",
   "--keywords",
   "--not-for",
@@ -107,6 +109,7 @@ Usage:
   agentcart serve [--port 8787]
   agentcart search "query" [--budget 100000]
   agentcart submit --title <title> --url <url> --curator <handle> --category <category> --best-for <csv> --not-for <csv> --note <text> [--disclosure <text>] [--price <amount>] [--currency <code>] [--keywords <csv>] [--display-name <name>]
+  agentcart register:draft <file>
   agentcart curator:room <handle>
   agentcart protocol:context <slug-or-id>
   agentcart protocol:persona <handle>
@@ -245,6 +248,136 @@ async function runSubmit(args, { workDir, stdout, stderr }) {
   });
 
   stdout(`Registered card: ${card.title} (${card.slug})`);
+
+  return 0;
+}
+
+function toArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function entriesFromRegistrationDraft(draft) {
+  if (Array.isArray(draft)) {
+    return draft.filter((item) => item?.kind === "CurationEntry");
+  }
+
+  if (draft?.kind === "CurationEntry") {
+    return [draft];
+  }
+
+  return [
+    ...toArray(draft?.entries),
+    ...toArray(draft?.curationEntries),
+  ].filter((entry) => entry?.kind === "CurationEntry" || entry?.title);
+}
+
+function personasFromRegistrationDraft(draft) {
+  if (Array.isArray(draft)) {
+    return draft.filter((item) => item?.kind === "RecommenderPersona");
+  }
+
+  if (draft?.kind === "RecommenderPersona") {
+    return [draft];
+  }
+
+  return [
+    ...toArray(draft?.personas),
+    ...toArray(draft?.recommenderPersonas),
+  ].filter((persona) => persona?.kind === "RecommenderPersona" || persona?.handle);
+}
+
+function cardInputFromCurationEntry(entry) {
+  return {
+    title: entry.title,
+    originalUrl: entry.originalUrl ?? entry.productUrl,
+    curator: {
+      handle: entry.curator?.handle ?? entry.curatorHandle,
+      displayName: entry.curator?.displayName ?? entry.curatorDisplayName,
+    },
+    category: entry.category,
+    bestFor: entry.bestFor ?? entry.fit,
+    notFor: entry.notFor ?? entry.avoid,
+    curationNote: entry.curationNote ?? entry.recommendationReason ?? entry.note,
+    disclosure: entry.disclosureHint ?? entry.disclosure,
+    priceAmount: entry.priceAmount,
+    currency: entry.currency,
+    searchKeywords: entry.searchKeywords,
+    riskFlags: entry.riskFlags,
+  };
+}
+
+function personaInputFromRecommenderPersona(persona) {
+  return {
+    handle: persona.handle,
+    displayName: persona.displayName,
+    personaName: persona.personaName,
+    tagline: persona.tagline,
+    greeting: persona.greeting,
+    adviceMode: persona.adviceMode,
+    commercialRole: persona.commercialRole,
+    voiceTraits: persona.voiceTraits,
+    curationPrinciples: persona.curationPrinciples,
+    defaultOneLiner: persona.defaultOneLiner,
+    categoryOneLiners: persona.categoryOneLiners,
+    disclosureText:
+      persona.disclosureText ?? persona.disclosurePolicy?.requiredDisclosureText,
+    firstPartyPriority: persona.disclosurePolicy?.firstPartyPriority,
+    competitorInclusionPolicy: persona.disclosurePolicy?.competitorInclusionPolicy,
+    sponsoredCampaign: persona.disclosurePolicy?.sponsoredCampaign,
+    officialBrandPersona: persona.disclosurePolicy?.officialBrandPersona,
+    conflictPolicy: persona.conflictPolicy,
+  };
+}
+
+async function runRegisterDraft(args, { workDir, stdout, stderr }) {
+  const filePath = flagValue(args, "--file") ?? positionalArgs(args)[0];
+
+  if (!filePath) {
+    stderr("Missing registration draft file");
+    return 1;
+  }
+
+  let draft;
+
+  try {
+    draft = JSON.parse(await readFile(filePath, "utf8"));
+  } catch (error) {
+    stderr(`Invalid registration draft JSON: ${error instanceof Error ? error.message : String(error)}`);
+    return 1;
+  }
+
+  const registryPath = registryPathFor(workDir);
+  const personas = personasFromRegistrationDraft(draft);
+  const entries = entriesFromRegistrationDraft(draft);
+  const registeredPersonas = [];
+  const registeredCards = [];
+
+  for (const persona of personas) {
+    registeredPersonas.push(
+      await addCuratorPersona(registryPath, personaInputFromRecommenderPersona(persona))
+    );
+  }
+
+  for (const entry of entries) {
+    registeredCards.push(await addCard(registryPath, cardInputFromCurationEntry(entry)));
+  }
+
+  if (registeredPersonas.length === 0 && registeredCards.length === 0) {
+    stderr("Registration draft contains no personas or curation entries");
+    return 1;
+  }
+
+  stdout(
+    `Registered draft: ${registeredPersonas.length} persona, ${registeredCards.length} card`
+  );
+
+  for (const persona of registeredPersonas) {
+    stdout(`Persona: @${persona.handle}`);
+  }
+
+  for (const card of registeredCards) {
+    stdout(`Card: ${card.title} (${card.slug})`);
+  }
 
   return 0;
 }
@@ -454,6 +587,10 @@ export async function run(args = [], options = {}) {
 
     if (command === "submit") {
       return await runSubmit(commandArgs, { workDir, stdout, stderr });
+    }
+
+    if (command === "register:draft") {
+      return await runRegisterDraft(commandArgs, { workDir, stdout, stderr });
     }
 
     if (command === "curator:room") {

@@ -37,7 +37,23 @@ If the relationship is unclear, mark it as `unknown_commercial_relationship` and
 
 ## Required Output
 
-Produce drafts in four parts.
+Produce one `AgentCartRegistrationDraft` that contains registration-ready `personas` and `entries`.
+
+```json
+{
+  "kind": "AgentCartRegistrationDraft",
+  "personas": [],
+  "entries": []
+}
+```
+
+After the user approves the draft, register it with:
+
+```sh
+npm run agentcart -- register:draft <draft.json>
+```
+
+Draft objects still use the following protocol structures.
 
 ### 1. CurationEntry
 
@@ -125,31 +141,37 @@ Run these checks before returning the final registration draft:
 
 ## Output Skeleton
 
-Return concise Markdown plus JSON-like drafts:
+Return concise Markdown plus one JSON-like registration draft:
 
 ```json
 {
-  "kind": "RecommenderPersona",
-  "handle": "junho-baek",
-  "displayName": "자취생 생존 큐레이터 백준호",
-  "commercialRole": "affiliate_curator",
-  "adviceMode": "insight_first",
-  "disclosurePolicy": {
-    "mustDisclose": ["affiliate_relationship"],
-    "relationshipText": "추천에는 커미션 링크가 포함될 수 있습니다.",
-    "prohibitedClaims": ["lowest_price", "live_stock", "seller_verified"]
-  }
-}
-```
-
-```json
-{
-  "kind": "CurationEntry",
-  "curatorHandle": "junho-baek",
-  "title": "너구리 얼큰한맛 120g 5개",
-  "productUrl": "https://link.coupang.com/a/example",
-  "fit": ["자취생 비상식량", "빠른 한 끼"],
-  "avoid": ["라면을 피하는 사용자", "나트륨 섭취를 줄이는 사용자"],
-  "disclosure": "쿠팡 파트너스 링크이며 구매 시 링크 등록자가 수수료를 받을 수 있습니다."
+  "kind": "AgentCartRegistrationDraft",
+  "personas": [
+    {
+      "kind": "RecommenderPersona",
+      "handle": "junho-baek",
+      "displayName": "백준호",
+      "personaName": "자취생 생존 큐레이터 백준호",
+      "commercialRole": "affiliate_publisher",
+      "adviceMode": "insight_first",
+      "disclosurePolicy": {
+        "requiredDisclosureText": "추천에는 커미션 링크가 포함될 수 있습니다.",
+        "prohibitedClaims": ["lowest_price", "live_stock", "seller_verified"]
+      }
+    }
+  ],
+  "entries": [
+    {
+      "kind": "CurationEntry",
+      "curator": { "handle": "junho-baek", "displayName": "백준호" },
+      "title": "너구리 얼큰한맛 120g 5개",
+      "originalUrl": "https://link.coupang.com/a/example",
+      "category": "grocery",
+      "bestFor": ["자취생 비상식량", "빠른 한 끼"],
+      "notFor": ["라면을 피하는 사용자", "나트륨 섭취를 줄이는 사용자"],
+      "curationNote": "보관이 쉽고 빠르게 한 끼를 해결할 수 있습니다.",
+      "disclosureHint": "쿠팡 파트너스 링크이며 구매 시 링크 등록자가 수수료를 받을 수 있습니다."
+    }
+  ]
 }
 ```

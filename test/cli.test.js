@@ -40,6 +40,7 @@ test("help lists registry commands and preserved auth commands", async () => {
     assert.match(output, /serve/);
     assert.match(output, /search/);
     assert.match(output, /submit/);
+    assert.match(output, /register:draft/);
     assert.match(output, /curator:room/);
     assert.match(output, /install-skill/);
     assert.match(output, /open/);
@@ -128,6 +129,69 @@ test("submit registers a card with normalized addCard fields", async () => {
     assert.deepEqual(card.notFor, ["비건 소재 선호"]);
     assert.deepEqual(card.searchKeywords, ["가죽 벨트", "선물"]);
     assert.equal(card.priceAmount, 45000);
+  });
+});
+
+test("register draft imports persona and curation entries from a skill-produced file", async () => {
+  await withCli(async ({ runCli, stdout, workDir }) => {
+    const draftPath = join(workDir, "registration-draft.json");
+    await writeFile(
+      draftPath,
+      JSON.stringify({
+        kind: "AgentCartRegistrationDraft",
+        personas: [
+          {
+            kind: "RecommenderPersona",
+            handle: "junho-baek",
+            displayName: "백준호",
+            personaName: "자취생 생존 큐레이터 백준호",
+            tagline: "실제로 먹는 장바구니를 만듭니다.",
+            adviceMode: "insight_first",
+            commercialRole: "affiliate_publisher",
+            voiceTraits: ["실용적"],
+            curationPrinciples: ["실제로 먹게 되는 식품을 우선합니다."],
+            defaultOneLiner: "생활 루프가 먼저입니다.",
+            disclosurePolicy: {
+              requiredDisclosureText:
+                "추천에는 커미션 링크가 포함될 수 있으며 구매 시 수수료를 받을 수 있습니다.",
+            },
+          },
+        ],
+        entries: [
+          {
+            kind: "CurationEntry",
+            title: "테스트 등록 라면",
+            originalUrl: "https://link.coupang.com/a/testRamen",
+            category: "grocery",
+            curator: { handle: "junho-baek", displayName: "백준호" },
+            bestFor: ["자취생 비상식량"],
+            notFor: ["나트륨 민감"],
+            curationNote: "보관하기 쉽고 빠르게 한 끼를 만들 수 있습니다.",
+            disclosureHint:
+              "쿠팡 파트너스 링크이며 구매 시 링크 등록자가 수수료를 받을 수 있습니다.",
+            searchKeywords: ["자취 라면", "비상식량"],
+          },
+        ],
+      }),
+      "utf8"
+    );
+
+    const code = await runCli(["register:draft", draftPath]);
+    const registry = await loadRegistry(registryPathFor(workDir));
+    const card = registry.cards.find((candidate) => candidate.title === "테스트 등록 라면");
+    const persona = registry.curatorPersonas.find(
+      (candidate) => candidate.handle === "junho-baek"
+    );
+
+    assert.equal(code, 0);
+    assert.match(stdout.join("\n"), /Registered draft: 1 persona, 1 card/);
+    assert.equal(card.slug, "테스트-등록-라면");
+    assert.equal(card.platform, "coupang");
+    assert.deepEqual(card.bestFor, ["자취생 비상식량"]);
+    assert.deepEqual(card.searchKeywords, ["자취 라면", "비상식량"]);
+    assert.equal(persona.personaName, "자취생 생존 큐레이터 백준호");
+    assert.equal(persona.commercialRole, "affiliate_publisher");
+    assert.match(persona.disclosureText, /커미션 링크/);
   });
 });
 

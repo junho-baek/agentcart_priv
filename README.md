@@ -67,6 +67,12 @@ npm run agentcart -- curator:room junho-baek
 npm run agentcart -- search "@junho-baek 이번 주 식비 3만원 자취 장바구니"
 ```
 
+Register an agent-generated creator or brand draft:
+
+```sh
+npm run agentcart -- register:draft ./registration-draft.json
+```
+
 Install the open-source shopping skill and run the local registry API:
 
 ```sh
@@ -99,7 +105,7 @@ npm run agentcart -- protocol:persona <handle>
 npm run agentcart -- protocol:validate docs/protocol/examples/agent-product-context.json
 ```
 
-The checked-in `skills/agentcart-curator-registration-skill.md` draft defines how creators, brands, merchants, and campaigns should prepare curator personas and product links before `agentcart-shopping` recommends them.
+The checked-in `skills/agentcart-curator-registration-skill.md` draft defines how creators, brands, merchants, and campaigns should prepare curator personas and product links before `agentcart-shopping` recommends them. An agent can turn messy links and captions into an `AgentCartRegistrationDraft`, then save it with `register:draft`.
 
 ## Skills
 

@@ -85,6 +85,8 @@ function createStoredCuratorPersona(input, createdAt) {
     personaName: String(input.personaName ?? "").trim(),
     tagline: String(input.tagline ?? "").trim(),
     greeting: String(input.greeting ?? "").trim(),
+    adviceMode: String(input.adviceMode ?? "insight_first").trim(),
+    commercialRole: String(input.commercialRole ?? "affiliate_publisher").trim(),
     voiceTraits: normalizeList(input.voiceTraits),
     curationPrinciples: normalizeList(input.curationPrinciples),
     defaultOneLiner: String(input.defaultOneLiner ?? "").trim(),
@@ -93,6 +95,11 @@ function createStoredCuratorPersona(input, createdAt) {
         ? input.categoryOneLiners
         : {},
     disclosureText: String(input.disclosureText ?? "").trim(),
+    firstPartyPriority: Boolean(input.firstPartyPriority),
+    competitorInclusionPolicy: String(input.competitorInclusionPolicy ?? "may_include").trim(),
+    sponsoredCampaign: input.sponsoredCampaign ?? false,
+    officialBrandPersona: Boolean(input.officialBrandPersona),
+    conflictPolicy: String(input.conflictPolicy ?? "").trim(),
     createdAt: input.createdAt ?? createdAt,
     updatedAt: input.updatedAt ?? createdAt,
   };
@@ -151,6 +158,44 @@ export async function addCard(path, input) {
   await saveRegistry(path, registry);
 
   return card;
+}
+
+export async function addCuratorPersona(path, input) {
+  const registry = await loadRegistry(path);
+  const createdAt = new Date().toISOString();
+  let persona = createStoredCuratorPersona(input, createdAt);
+
+  if (!persona.handle) {
+    throw new Error("Invalid curator persona: handle_required");
+  }
+
+  if (!persona.personaName) {
+    throw new Error("Invalid curator persona: persona_name_required");
+  }
+
+  const curatorPersonas = Array.isArray(registry.curatorPersonas)
+    ? registry.curatorPersonas
+    : [];
+  const existingIndex = curatorPersonas.findIndex(
+    (existingPersona) => normalizeHandle(existingPersona.handle) === persona.handle
+  );
+
+  if (existingIndex === -1) {
+    curatorPersonas.push(persona);
+  } else {
+    const existingPersona = curatorPersonas[existingIndex];
+    persona = {
+      ...persona,
+      createdAt: existingPersona.createdAt,
+      updatedAt: nextTimestampAfter(existingPersona.updatedAt ?? existingPersona.createdAt),
+    };
+    curatorPersonas[existingIndex] = persona;
+  }
+
+  registry.curatorPersonas = curatorPersonas;
+  await saveRegistry(path, registry);
+
+  return persona;
 }
 
 export async function seedRegistry(path = registryPathFor(), options = {}) {

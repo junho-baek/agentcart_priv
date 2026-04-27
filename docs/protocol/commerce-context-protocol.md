@@ -5,6 +5,7 @@ AgentCart is an agent-readable commerce context protocol for product links, reco
 The protocol separates what humans register from what agents consume:
 
 - `CurationEntry`: human-friendly source data from a creator, brand, merchant, or campaign.
+- `AgentCartRegistrationDraft`: an import bundle containing one or more `CurationEntry` and `RecommenderPersona` objects.
 - `AgentProductContext`: normalized product context that an AI agent can safely read before recommending or opening a link.
 - `RecommenderPersona`: an insight-first commercial actor persona that explains judgment criteria, incentives, and recommendation style.
 - `DisclosurePolicy`: the required disclosure and conflict rules that travel with the recommendation.
@@ -37,6 +38,24 @@ Optional fields:
 - `claimNotes`
 - `riskFlags`
 - `sourceMetadata`
+
+## AgentCartRegistrationDraft
+
+`AgentCartRegistrationDraft` is the first agent-to-CLI registration bundle. It lets a registration skill produce one approved file that the local CLI can import without a web admin console.
+
+Required fields:
+
+- `kind`: always `AgentCartRegistrationDraft`
+- `personas`: zero or more `RecommenderPersona` objects
+- `entries`: one or more `CurationEntry` objects
+
+Import command:
+
+```sh
+npm run agentcart -- register:draft ./registration-draft.json
+```
+
+The importer upserts personas by handle and cards by slug. It still validates each card through the registry schema, so drafts must include title, URL, curator handle, best-for rules, and not-for rules.
 
 ## AgentProductContext
 
