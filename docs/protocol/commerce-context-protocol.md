@@ -46,8 +46,17 @@ Optional fields:
 Required fields:
 
 - `kind`: always `AgentCartRegistrationDraft`
+- `accountEmail`: normalized owner account email for beta registration
 - `personas`: zero or more `RecommenderPersona` objects
 - `entries`: one or more `CurationEntry` objects
+- `visibility`: default entry visibility, usually `curator_scoped`
+
+Beta defaults:
+
+- `maxPersonas`: `1`
+- `maxEntries`: `30`
+- `visibility`: `private`, `curator_scoped`, or `public_candidate`
+- `publicationStatus`: `draft`, `review_required`, `published`, or `rejected`
 
 Import command:
 
@@ -56,6 +65,8 @@ npm run agentcart -- register:draft ./registration-draft.json
 ```
 
 The importer upserts personas by handle and cards by slug. It still validates each card through the registry schema, so drafts must include title, URL, curator handle, best-for rules, and not-for rules.
+
+Free beta entries should not assume global search exposure. The default service path is curator-scoped lookup from copy-paste prompts, while global discovery should require later review, an approved tier, or explicit publication policy.
 
 ## AgentProductContext
 
