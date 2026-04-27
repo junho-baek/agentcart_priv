@@ -129,6 +129,18 @@ test("checked-in purchase assist skill documents browser and payment boundaries"
   assert.match(content, /Do not click keypad digits/);
 });
 
+test("shopping skill documents campaign-scoped skincare safety behavior", async () => {
+  const content = await readFile(
+    new URL("../skills/agentcart-shopping-skill.md", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(content, /campaignHandle/);
+  assert.match(content, /barrier-repair-under-60/);
+  assert.match(content, /patch test first/);
+  assert.match(content, /not medical advice/);
+});
+
 test("checked-in curator registration skill documents protocol structures and disclosure", async () => {
   const content = await readFile(
     new URL("../skills/agentcart-curator-registration-skill.md", import.meta.url),
@@ -140,6 +152,10 @@ test("checked-in curator registration skill documents protocol structures and di
   assert.match(content, /RecommenderPersona/);
   assert.match(content, /Commercial actor persona/);
   assert.match(content, /Do not hide brand, sponsor, affiliate, or merchant relationships/);
+  assert.match(content, /campaignHandle/);
+  assert.match(content, /creator post CTA/);
+  assert.match(content, /skincare/);
+  assert.match(content, /Do not claim treatment outcomes/);
 });
 
 test("checked-in curator registration skill documents beta registration limits", async () => {

@@ -81,10 +81,13 @@ This is the registration-side object. Include:
 - curator handle
 - platform
 - product URL
+- `campaignHandle`: kebab-case id for a creator post, campaign, or CTA
+- creator post CTA: the sentence followers paste into their agent
 - fit rules
 - avoid rules
 - recommendation reason
 - disclosure text
+- skincare safety notes when the campaign touches skin, wellness, supplements, or health-sensitive categories
 - risk flags
 - source notes and evidence limits
 
@@ -153,6 +156,7 @@ Run these checks before returning the final registration draft:
 ## Safety Boundaries
 
 - Do not invent products, prices, discounts, stock, seller verification, or campaign terms.
+- Do not claim treatment outcomes. For skincare, keep language to routine fit, sensitivity, ingredient caution, patch testing, and cosmetic support.
 - Do not claim lowest price or best price on the internet.
 - Do not claim a product is medically effective, legally compliant, authentic, safe for all users, or warranty-covered unless the provided evidence says so.
 - Do not submit purchase links without disclosure.
