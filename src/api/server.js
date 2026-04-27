@@ -1,7 +1,8 @@
 import http from "node:http";
 
-import { getCuratorRoom } from "../registry/curator.js";
+import { getCuratorPersona, getCuratorRoom } from "../registry/curator.js";
 import { createFeedbackEvent } from "../registry/feedback.js";
+import { buildAgentProductContext, buildRecommenderPersona } from "../registry/protocol.js";
 import { formatRecommendationResponse, searchCards } from "../registry/recommend.js";
 import { loadRegistry, registryPathFor, saveRegistry } from "../registry/store.js";
 
@@ -169,6 +170,50 @@ export function createServer({ registryPath, allowedOrigins = DEFAULT_ALLOWED_OR
         }
 
         sendJson(response, 200, { card }, corsHeaders);
+        return;
+      }
+
+      if (
+        request.method === "GET" &&
+        parts.length === 4 &&
+        parts[0] === "api" &&
+        parts[1] === "protocol" &&
+        parts[2] === "context"
+      ) {
+        const registry = await loadRegistry(activeRegistryPath);
+        const cardIdOrSlug = parts[3];
+        const card = (Array.isArray(registry.cards) ? registry.cards : []).find(
+          (candidate) => candidate.id === cardIdOrSlug || candidate.slug === cardIdOrSlug
+        );
+
+        if (!card) {
+          sendJson(response, 404, { error: "context_not_found" }, corsHeaders);
+          return;
+        }
+
+        const persona = getCuratorPersona(registry, card.curator?.handle);
+        sendJson(response, 200, {
+          context: buildAgentProductContext(card, { persona }),
+        }, corsHeaders);
+        return;
+      }
+
+      if (
+        request.method === "GET" &&
+        parts.length === 4 &&
+        parts[0] === "api" &&
+        parts[1] === "protocol" &&
+        parts[2] === "personas"
+      ) {
+        const registry = await loadRegistry(activeRegistryPath);
+        const persona = getCuratorPersona(registry, parts[3]);
+
+        if (!persona) {
+          sendJson(response, 404, { error: "persona_not_found" }, corsHeaders);
+          return;
+        }
+
+        sendJson(response, 200, { persona: buildRecommenderPersona(persona) }, corsHeaders);
         return;
       }
 

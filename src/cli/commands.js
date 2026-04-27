@@ -3,7 +3,12 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join } from "node:path";
 
 import { createServer } from "../api/server.js";
-import { getCuratorRoom } from "../registry/curator.js";
+import { getCuratorPersona, getCuratorRoom } from "../registry/curator.js";
+import {
+  buildAgentProductContext,
+  buildRecommenderPersona,
+  validateProtocolObject,
+} from "../registry/protocol.js";
 import { formatRecommendationResponse, searchCards } from "../registry/recommend.js";
 import {
   addCard,
@@ -103,6 +108,9 @@ Usage:
   agentcart search "query" [--budget 100000]
   agentcart submit --title <title> --url <url> --curator <handle> --category <category> --best-for <csv> --not-for <csv> --note <text> [--disclosure <text>] [--price <amount>] [--currency <code>] [--keywords <csv>] [--display-name <name>]
   agentcart curator:room <handle>
+  agentcart protocol:context <slug-or-id>
+  agentcart protocol:persona <handle>
+  agentcart protocol:validate <file>
   agentcart install-skill --target generic|codex|claude|openclaw [--output <path>]
   agentcart open <slug-or-id> [--dry-run]
   agentcart login [--email creator@example.com]
@@ -270,6 +278,72 @@ async function runCuratorRoom(args, { workDir, stdout, stderr }) {
   return 0;
 }
 
+function findCard(registry, slugOrId) {
+  return (Array.isArray(registry.cards) ? registry.cards : []).find(
+    (candidate) => candidate.slug === slugOrId || candidate.id === slugOrId
+  );
+}
+
+async function runProtocolContext(args, { workDir, stdout, stderr }) {
+  const slugOrId = positionalArgs(args)[0];
+  const registry = await loadRegistry(registryPathFor(workDir));
+  const card = findCard(registry, slugOrId);
+
+  if (!card) {
+    stderr(`Protocol context not found: ${slugOrId ?? ""}`.trim());
+    return 1;
+  }
+
+  const persona = getCuratorPersona(registry, card.curator?.handle);
+  stdout(JSON.stringify(buildAgentProductContext(card, { persona }), null, 2));
+
+  return 0;
+}
+
+async function runProtocolPersona(args, { workDir, stdout, stderr }) {
+  const handle = positionalArgs(args)[0];
+  const registry = await loadRegistry(registryPathFor(workDir));
+  const persona = getCuratorPersona(registry, handle);
+
+  if (!persona) {
+    stderr(`Protocol persona not found: ${handle ?? ""}`.trim());
+    return 1;
+  }
+
+  stdout(JSON.stringify(buildRecommenderPersona(persona), null, 2));
+
+  return 0;
+}
+
+async function runProtocolValidate(args, { stdout, stderr }) {
+  const filePath = positionalArgs(args)[0];
+
+  if (!filePath) {
+    stderr("Missing protocol object file");
+    return 1;
+  }
+
+  let object;
+
+  try {
+    object = JSON.parse(await readFile(filePath, "utf8"));
+  } catch (error) {
+    stderr(`Invalid JSON: ${error instanceof Error ? error.message : String(error)}`);
+    return 1;
+  }
+
+  const result = validateProtocolObject(object);
+
+  if (!result.ok) {
+    stderr(`Protocol object invalid: ${result.errors.join(", ")}`);
+    return 1;
+  }
+
+  stdout(`Protocol object valid: ${object.kind}`);
+
+  return 0;
+}
+
 async function runInstallSkill(args, { workDir, stdout }) {
   const target = flagValue(args, "--target") ?? "generic";
   const output = flagValue(args, "--output");
@@ -283,9 +357,7 @@ async function runInstallSkill(args, { workDir, stdout }) {
 async function runOpen(args, { workDir, stdout, stderr }) {
   const slugOrId = positionalArgs(args)[0];
   const registry = await loadRegistry(registryPathFor(workDir));
-  const card = (Array.isArray(registry.cards) ? registry.cards : []).find(
-    (candidate) => candidate.slug === slugOrId || candidate.id === slugOrId
-  );
+  const card = findCard(registry, slugOrId);
 
   if (!card) {
     stderr(`Card not found: ${slugOrId ?? ""}`.trim());
@@ -386,6 +458,18 @@ export async function run(args = [], options = {}) {
 
     if (command === "curator:room") {
       return await runCuratorRoom(commandArgs, { workDir, stdout, stderr });
+    }
+
+    if (command === "protocol:context") {
+      return await runProtocolContext(commandArgs, { workDir, stdout, stderr });
+    }
+
+    if (command === "protocol:persona") {
+      return await runProtocolPersona(commandArgs, { workDir, stdout, stderr });
+    }
+
+    if (command === "protocol:validate") {
+      return await runProtocolValidate(commandArgs, { stdout, stderr });
     }
 
     if (command === "install-skill") {

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import http from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -172,6 +172,45 @@ test("open accepts boolean dry-run flag before the slug", async () => {
 
     assert.equal(code, 0);
     assert.match(stdout.join("\n"), /Dry run: https:\/\/link\.coupang\.com\/a\/evvpLi/);
+  });
+});
+
+test("protocol context and persona commands print agent-readable JSON", async () => {
+  await withCli(async ({ runCli, stdout }) => {
+    await runCli(["seed"]);
+    const contextCode = await runCli(["protocol:context", "블랙-소가죽-반지갑"]);
+    const personaCode = await runCli(["protocol:persona", "junho-baek"]);
+    const contextStart = stdout.findIndex((line) => line.includes('"kind": "AgentProductContext"'));
+    const personaStart = stdout.findIndex((line) => line.includes('"kind": "RecommenderPersona"'));
+
+    assert.equal(contextCode, 0);
+    assert.equal(personaCode, 0);
+    assert.notEqual(contextStart, -1);
+    assert.notEqual(personaStart, -1);
+    assert.match(stdout.slice(contextStart).join("\n"), /"allowedActions"/);
+    assert.match(stdout.slice(personaStart).join("\n"), /"adviceMode": "insight_first"/);
+  });
+});
+
+test("protocol validate accepts valid protocol JSON files", async () => {
+  await withCli(async ({ runCli, stdout, workDir }) => {
+    const filePath = join(workDir, "context.json");
+    await writeFile(
+      filePath,
+      JSON.stringify({
+        kind: "CurationEntry",
+        id: "entry-1",
+        title: "테스트 상품",
+        originalUrl: "https://brand.example/products/1",
+        curator: { handle: "tester" },
+      }),
+      "utf8"
+    );
+
+    const code = await runCli(["protocol:validate", filePath]);
+
+    assert.equal(code, 0);
+    assert.match(stdout.join("\n"), /Protocol object valid: CurationEntry/);
   });
 });
 

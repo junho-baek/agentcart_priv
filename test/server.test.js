@@ -136,6 +136,38 @@ test("curator route includes seeded Junho Baek persona when matching cards exist
   });
 });
 
+test("protocol context route returns agent-facing product context and reports missing cards", async () => {
+  await withSeededServer(async ({ baseUrl, registryPath }) => {
+    const registry = await loadRegistry(registryPath);
+    const card = registry.cards[0];
+    const found = await fetchJson(`${baseUrl}/api/protocol/context/${encodeURIComponent(card.slug)}`);
+    const missing = await fetchJson(`${baseUrl}/api/protocol/context/missing-card`);
+
+    assert.equal(found.response.status, 200);
+    assert.equal(found.body.context.kind, "AgentProductContext");
+    assert.equal(found.body.context.product.title, card.title);
+    assert.equal(found.body.context.recommender.handle, card.curator.handle);
+    assert.ok(found.body.context.allowedActions.includes("ask_before_opening"));
+    assert.equal(missing.response.status, 404);
+    assert.deepEqual(missing.body, { error: "context_not_found" });
+  });
+});
+
+test("protocol persona route returns an agent-facing recommender persona", async () => {
+  await withSeededServer(async ({ baseUrl }) => {
+    const found = await fetchJson(`${baseUrl}/api/protocol/personas/junho-baek`);
+    const missing = await fetchJson(`${baseUrl}/api/protocol/personas/missing`);
+
+    assert.equal(found.response.status, 200);
+    assert.equal(found.body.persona.kind, "RecommenderPersona");
+    assert.equal(found.body.persona.handle, "junho-baek");
+    assert.equal(found.body.persona.adviceMode, "insight_first");
+    assert.equal(found.body.persona.commercialRole, "affiliate_publisher");
+    assert.equal(missing.response.status, 404);
+    assert.deepEqual(missing.body, { error: "persona_not_found" });
+  });
+});
+
 test("feedback POST persists events and invalid input returns 400", async () => {
   await withSeededServer(async ({ baseUrl, registryPath }) => {
     const registry = await loadRegistry(registryPath);
