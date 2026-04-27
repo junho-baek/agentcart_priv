@@ -92,6 +92,7 @@ export function buildCurationEntry(card) {
     bestFor: normalizeList(card?.bestFor),
     notFor: normalizeList(card?.notFor),
     searchKeywords: normalizeList(card?.searchKeywords),
+    campaignHandle: String(card?.campaignHandle ?? "").trim(),
     curationNote: String(card?.curationNote ?? "").trim(),
     curatorOneLiner: String(card?.curatorOneLiner ?? "").trim(),
     claimNotes: normalizeList(card?.claimNotes),
@@ -161,6 +162,7 @@ export function buildAgentProductContext(card, { persona } = {}) {
       relationshipType,
     },
     recommendationContext: {
+      campaignHandle: curationEntry.campaignHandle,
       curationNote: curationEntry.curationNote,
       curatorOneLiner:
         curationEntry.curatorOneLiner || String(recommenderPersona?.defaultOneLiner ?? "").trim(),
@@ -186,6 +188,7 @@ export function buildAgentProductContext(card, { persona } = {}) {
     },
     risk: {
       riskFlags: curationEntry.riskFlags,
+      claimNotes: curationEntry.claimNotes,
       prohibitedClaims: DEFAULT_PROHIBITED_CLAIMS,
     },
     allowedActions: DEFAULT_ALLOWED_ACTIONS,

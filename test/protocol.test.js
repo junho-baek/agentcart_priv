@@ -22,6 +22,8 @@ const card = {
   notFor: ["나트륨 민감"],
   searchKeywords: ["자취생 라면", "간편식"],
   curationNote: "보관이 쉽고 빠르게 한 끼를 해결할 수 있습니다.",
+  campaignHandle: "barrier-repair-under-60",
+  claimNotes: ["Cosmetic routine support only; not medical treatment."],
   disclosure: "구매 시 링크 등록자가 수수료를 받을 수 있습니다.",
   riskFlags: ["nutrition_balance"],
   updatedAt: "2026-04-28T00:00:00.000Z",
@@ -49,6 +51,10 @@ test("buildCurationEntry maps a card into human registration context", () => {
   assert.equal(entry.curator.handle, "junho-baek");
   assert.deepEqual(entry.bestFor, ["자취생 음식", "비상식량"]);
   assert.deepEqual(entry.notFor, ["나트륨 민감"]);
+  assert.equal(entry.campaignHandle, "barrier-repair-under-60");
+  assert.deepEqual(entry.claimNotes, [
+    "Cosmetic routine support only; not medical treatment.",
+  ]);
   assert.equal(entry.disclosureHint, card.disclosure);
 });
 
@@ -70,8 +76,12 @@ test("buildAgentProductContext maps a card and persona into agent-facing context
   assert.equal(context.recommender.handle, "junho-baek");
   assert.equal(context.recommender.personaName, "자취생 생존 큐레이터 백준호");
   assert.equal(context.disclosure.relationshipType, "affiliate");
+  assert.equal(context.recommendationContext.campaignHandle, "barrier-repair-under-60");
   assert.deepEqual(context.fitRules.bestFor, ["자취생 음식", "비상식량"]);
   assert.deepEqual(context.risk.riskFlags, ["nutrition_balance"]);
+  assert.deepEqual(context.risk.claimNotes, [
+    "Cosmetic routine support only; not medical treatment.",
+  ]);
   assert.ok(context.allowedActions.includes("ask_before_opening"));
   assert.ok(context.risk.prohibitedClaims.includes("lowest_price"));
 });
