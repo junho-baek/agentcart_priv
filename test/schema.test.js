@@ -82,6 +82,27 @@ test("createCard produces a Korean slug and embedding text for Korean-only title
   assert.match(card.embeddingText, /온열 목 마사지기/);
 });
 
+test("createCard preserves campaign and claim metadata for UGC campaign demos", () => {
+  const card = createCard({
+    title: "Barrier Cream",
+    category: "skincare",
+    originalUrl: "https://brand.example/products/barrier-cream",
+    curator: { handle: "maya-glow" },
+    bestFor: ["dry sensitive skin"],
+    notFor: ["fragrance-sensitive users"],
+    curationNote: "Use as the final moisturizer step.",
+    campaignHandle: "barrier-repair-under-60",
+    claimNotes: ["Cosmetic routine support only; not acne or eczema treatment."],
+  });
+
+  assert.equal(card.campaignHandle, "barrier-repair-under-60");
+  assert.deepEqual(card.claimNotes, [
+    "Cosmetic routine support only; not acne or eczema treatment.",
+  ]);
+  assert.match(card.embeddingText, /barrier-repair-under-60/);
+  assert.match(card.embeddingText, /Cosmetic routine support only/);
+});
+
 test("buildEmbeddingText is stable and vector-ready", () => {
   const text = buildEmbeddingText({
     title: "블랙 소가죽 반지갑",
@@ -94,6 +115,6 @@ test("buildEmbeddingText is stable and vector-ready", () => {
 
   assert.equal(
     text,
-    "블랙 소가죽 반지갑. category: wallet. platform: coupang. best for: 남자 선물, 10만원 이하. not for: 초슬림 지갑 선호. note: 카드 수납이 많고 선물 포장이 무난함."
+    "블랙 소가죽 반지갑. category: wallet. platform: coupang. campaign: . best for: 남자 선물, 10만원 이하. not for: 초슬림 지갑 선호. note: 카드 수납이 많고 선물 포장이 무난함. claims: ."
   );
 });

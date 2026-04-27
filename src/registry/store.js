@@ -39,6 +39,7 @@ function createStoredCard(input, createdAt) {
     bestFor: normalizeList(input.bestFor),
     notFor: normalizeList(input.notFor),
     searchKeywords: normalizeList(input.searchKeywords),
+    claimNotes: normalizeList(input.claimNotes),
     riskFlags: normalizeList(input.riskFlags),
     createdAt: createdAt ?? input.createdAt,
   };
@@ -49,6 +50,8 @@ function createStoredCard(input, createdAt) {
     updatedAt: input.updatedAt ?? createdAt ?? card.createdAt,
     priceAmount: normalizedInput.priceAmount,
     currency: normalizedInput.currency,
+    campaignHandle: String(normalizedInput.campaignHandle ?? "").trim(),
+    claimNotes: normalizedInput.claimNotes,
     searchKeywords: normalizedInput.searchKeywords,
     riskFlags: normalizedInput.riskFlags,
     accountEmail: normalizeAccountEmail(normalizedInput.accountEmail),

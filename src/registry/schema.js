@@ -64,13 +64,16 @@ export function normalizeArray(value) {
 export function buildEmbeddingText(card) {
   const bestFor = normalizeArray(card.bestFor);
   const notFor = normalizeArray(card.notFor);
+  const claimNotes = normalizeArray(card.claimNotes);
   const parts = [
     `${String(card.title ?? "").trim()}.`,
     `category: ${String(card.category ?? "").trim()}.`,
     `platform: ${String(card.platform ?? "").trim()}.`,
+    `campaign: ${String(card.campaignHandle ?? "").trim()}.`,
     `best for: ${bestFor.join(", ")}.`,
     `not for: ${notFor.join(", ")}.`,
     `note: ${String(card.curationNote ?? "").trim()}.`,
+    `claims: ${claimNotes.join(", ")}.`,
   ];
 
   return parts.join(" ");
@@ -144,6 +147,8 @@ export function createCard(input) {
     bestFor: normalizeArray(input.bestFor),
     notFor: normalizeArray(input.notFor),
     curationNote: String(input.curationNote ?? "").trim(),
+    campaignHandle: String(input.campaignHandle ?? "").trim(),
+    claimNotes: normalizeArray(input.claimNotes),
     disclosure: normalizeDisclosure(platform, input.disclosure),
     createdAt: input.createdAt ?? new Date().toISOString(),
   };

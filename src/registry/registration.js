@@ -111,6 +111,8 @@ export function cardInputFromCurationEntry(entry) {
     disclosure: entry.disclosureHint ?? entry.disclosure,
     priceAmount: entry.priceAmount,
     currency: entry.currency,
+    campaignHandle: entry.campaignHandle,
+    claimNotes: entry.claimNotes,
     searchKeywords: entry.searchKeywords,
     riskFlags: entry.riskFlags,
     accountEmail: entry.accountEmail,
