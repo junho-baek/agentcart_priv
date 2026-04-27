@@ -48,6 +48,24 @@ Business model:
 
 Brand personas must be explicit. If a persona represents a brand, store, or sponsored campaign, AgentCart should disclose that relationship, whether the persona prioritizes first-party products, and whether recommendations include or exclude competing products.
 
+## Beta Service Model
+
+AgentCart needs a hosted registry API and operational DB before it becomes a real service or monetization layer. The local JSON registry remains the development backend, but the service contract is account-based:
+
+- Email-gated registration.
+- Free beta: 1 curator persona and 30 product links per account.
+- Default visibility: `curator_scoped`.
+- Default publication status: `draft`.
+- Curator-scoped search is the default service path.
+- Global search should come later through review, approval, or paid tiers.
+- CLI or MCP should hide registry URLs from user prompts; users should not have to paste API endpoints into shopping requests.
+
+The intended service flow is:
+
+```text
+registration skill -> AgentCartRegistrationDraft -> register:draft or POST /api/register-draft -> hosted registry API -> operational DB
+```
+
 ## Local MVP
 
 Use Node v24, then install dependencies and seed the local JSON registry:

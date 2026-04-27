@@ -2,9 +2,30 @@ import http from "node:http";
 
 import { getCuratorPersona, getCuratorRoom } from "../registry/curator.js";
 import { createFeedbackEvent } from "../registry/feedback.js";
-import { buildAgentProductContext, buildRecommenderPersona } from "../registry/protocol.js";
+import {
+  buildAgentProductContext,
+  buildRecommenderPersona,
+  normalizeHandle,
+} from "../registry/protocol.js";
+import {
+  FREE_BETA_LIMITS,
+  cardInputFromCurationEntry,
+  entriesFromRegistrationDraft,
+  normalizeAccountEmail,
+  personaInputFromRecommenderPersona,
+  personasFromRegistrationDraft,
+  validateRegistrationDraft,
+} from "../registry/registration.js";
 import { formatRecommendationResponse, searchCards } from "../registry/recommend.js";
-import { loadRegistry, registryPathFor, saveRegistry } from "../registry/store.js";
+import {
+  addCard,
+  addCuratorPersona,
+  countAccountCards,
+  loadRegistry,
+  registryPathFor,
+  saveRegistry,
+  upsertAccount,
+} from "../registry/store.js";
 
 const DISCLOSURE =
   "추천 결과에는 커미션 링크가 포함될 수 있으며, 구매 시 링크 등록자가 수수료를 받을 수 있습니다.";
@@ -14,7 +35,7 @@ const DEFAULT_ALLOWED_ORIGINS = ["http://127.0.0.1:5173", "http://localhost:5173
 function corsHeadersFor(origin, allowedOrigins) {
   const headers = {
     "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, X-AgentCart-Account-Email",
   };
 
   if (!origin) {
@@ -132,13 +153,19 @@ export function createServer({ registryPath, allowedOrigins = DEFAULT_ALLOWED_OR
       if (request.method === "GET" && url.pathname === "/api/search") {
         const registry = await loadRegistry(activeRegistryPath);
         const query = url.searchParams.get("q") ?? "";
+        const curatorHandle = normalizeHandle(url.searchParams.get("curator"));
         const context = {};
 
         if (url.searchParams.has("budget")) {
           context.budgetAmount = Number(url.searchParams.get("budget"));
         }
 
-        const cards = searchCards(query, registry.cards, context);
+        const candidateCards = curatorHandle
+          ? (Array.isArray(registry.cards) ? registry.cards : []).filter(
+              (card) => normalizeHandle(card.curator?.handle) === curatorHandle
+            )
+          : registry.cards;
+        const cards = searchCards(query, candidateCards, context);
 
         sendJson(response, 200, {
           disclosure: DISCLOSURE,
@@ -273,6 +300,94 @@ export function createServer({ registryPath, allowedOrigins = DEFAULT_ALLOWED_OR
         });
 
         sendJson(response, 201, { event }, corsHeaders);
+        return;
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/register-draft") {
+        let draft;
+
+        try {
+          draft = await parseJsonBody(request);
+        } catch (error) {
+          if (error.message === "body_too_large") {
+            sendJson(response, 413, { error: "body_too_large" }, corsHeaders);
+            return;
+          }
+
+          if (error.message === "invalid_json") {
+            sendJson(response, 400, { error: "invalid_json" }, corsHeaders);
+            return;
+          }
+
+          throw error;
+        }
+
+        const accountEmail = normalizeAccountEmail(
+          draft.accountEmail ?? request.headers["x-agentcart-account-email"]
+        );
+        const validation = validateRegistrationDraft(draft, {
+          ...FREE_BETA_LIMITS,
+          accountEmail,
+        });
+
+        if (!validation.ok) {
+          sendJson(response, 400, {
+            error: validation.errors[0],
+            errors: validation.errors,
+          }, corsHeaders);
+          return;
+        }
+
+        const registry = await loadRegistry(activeRegistryPath);
+        const existingAccountCardCount = countAccountCards(registry, accountEmail);
+
+        if (existingAccountCardCount + validation.entryCount > FREE_BETA_LIMITS.maxEntries) {
+          sendJson(response, 400, {
+            error: "account_entry_limit_exceeded",
+            errors: ["account_entry_limit_exceeded"],
+          }, corsHeaders);
+          return;
+        }
+
+        const personas = personasFromRegistrationDraft(draft);
+        const entries = entriesFromRegistrationDraft(draft);
+        const registeredPersonas = [];
+        const registeredCards = [];
+
+        await upsertAccount(activeRegistryPath, {
+          email: accountEmail,
+          plan: "free_beta",
+          maxPersonas: FREE_BETA_LIMITS.maxPersonas,
+          maxEntries: FREE_BETA_LIMITS.maxEntries,
+        });
+
+        for (const persona of personas) {
+          registeredPersonas.push(
+            await addCuratorPersona(activeRegistryPath, {
+              ...personaInputFromRecommenderPersona(persona),
+              accountEmail,
+            })
+          );
+        }
+
+        for (const entry of entries) {
+          registeredCards.push(
+            await addCard(activeRegistryPath, {
+              ...cardInputFromCurationEntry(entry),
+              accountEmail,
+              visibility: entry.visibility ?? draft.visibility ?? "curator_scoped",
+              publicationStatus: entry.publicationStatus ?? draft.publicationStatus ?? "draft",
+            })
+          );
+        }
+
+        sendJson(response, 201, {
+          registered: {
+            accountEmail,
+            personas: registeredPersonas.length,
+            cards: registeredCards.length,
+          },
+        }, corsHeaders);
         return;
       }
 

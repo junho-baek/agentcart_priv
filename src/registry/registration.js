@@ -95,3 +95,50 @@ export function validateRegistrationDraft(draft, options = {}) {
     personaCount: personas.length,
   };
 }
+
+export function cardInputFromCurationEntry(entry) {
+  return {
+    title: entry.title,
+    originalUrl: entry.originalUrl ?? entry.productUrl,
+    curator: {
+      handle: entry.curator?.handle ?? entry.curatorHandle,
+      displayName: entry.curator?.displayName ?? entry.curatorDisplayName,
+    },
+    category: entry.category,
+    bestFor: entry.bestFor ?? entry.fit,
+    notFor: entry.notFor ?? entry.avoid,
+    curationNote: entry.curationNote ?? entry.recommendationReason ?? entry.note,
+    disclosure: entry.disclosureHint ?? entry.disclosure,
+    priceAmount: entry.priceAmount,
+    currency: entry.currency,
+    searchKeywords: entry.searchKeywords,
+    riskFlags: entry.riskFlags,
+    accountEmail: entry.accountEmail,
+    visibility: entry.visibility,
+    publicationStatus: entry.publicationStatus,
+  };
+}
+
+export function personaInputFromRecommenderPersona(persona) {
+  return {
+    handle: persona.handle,
+    displayName: persona.displayName,
+    personaName: persona.personaName,
+    tagline: persona.tagline,
+    greeting: persona.greeting,
+    adviceMode: persona.adviceMode,
+    commercialRole: persona.commercialRole,
+    voiceTraits: persona.voiceTraits,
+    curationPrinciples: persona.curationPrinciples,
+    defaultOneLiner: persona.defaultOneLiner,
+    categoryOneLiners: persona.categoryOneLiners,
+    disclosureText:
+      persona.disclosureText ?? persona.disclosurePolicy?.requiredDisclosureText,
+    accountEmail: persona.accountEmail,
+    firstPartyPriority: persona.disclosurePolicy?.firstPartyPriority,
+    competitorInclusionPolicy: persona.disclosurePolicy?.competitorInclusionPolicy,
+    sponsoredCampaign: persona.disclosurePolicy?.sponsoredCampaign,
+    officialBrandPersona: persona.disclosurePolicy?.officialBrandPersona,
+    conflictPolicy: persona.conflictPolicy,
+  };
+}

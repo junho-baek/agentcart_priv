@@ -66,6 +66,56 @@ test("search returns top card wrappers, disclosure, and CLI instructions", async
   });
 });
 
+test("search can be scoped to a curator handle", async () => {
+  await withSeededServer(async ({ baseUrl, registryPath }) => {
+    const registry = await loadRegistry(registryPath);
+    registry.cards.push(
+      {
+        id: "junho-grocery-scoped",
+        slug: "junho-grocery-scoped",
+        title: "자취생 테스트 식품",
+        platform: "coupang",
+        category: "grocery",
+        originalUrl: "https://link.coupang.com/a/junhoScoped",
+        curator: { handle: "junho-baek", displayName: "백준호" },
+        bestFor: ["자취생 음식"],
+        notFor: ["조리 싫어함"],
+        curationNote: "자취생 기본 식품",
+        disclosure: "구매 시 수수료를 받을 수 있습니다.",
+        riskFlags: [],
+      },
+      {
+        id: "other-grocery-scoped",
+        slug: "other-grocery-scoped",
+        title: "다른 큐레이터 식품",
+        platform: "coupang",
+        category: "grocery",
+        originalUrl: "https://link.coupang.com/a/otherScoped",
+        curator: { handle: "other-curator", displayName: "Other" },
+        bestFor: ["자취생 음식"],
+        notFor: ["조리 싫어함"],
+        curationNote: "다른 큐레이터 식품",
+        disclosure: "구매 시 수수료를 받을 수 있습니다.",
+        riskFlags: [],
+      }
+    );
+    await saveRegistry(registryPath, registry);
+
+    const url = new URL("/api/search", baseUrl);
+    url.searchParams.set("q", "자취생 음식");
+    url.searchParams.set("curator", "junho-baek");
+
+    const { response, body } = await fetchJson(url);
+
+    assert.equal(response.status, 200);
+    assert.ok(body.results.length > 0);
+    assert.ok(
+      body.results.every((result) => result.card.curator.handle === "junho-baek")
+    );
+    assert.ok(body.results.some((result) => result.card.title === "자취생 테스트 식품"));
+  });
+});
+
 test("no-match search returns an empty result list without a server error", async () => {
   await withSeededServer(async ({ baseUrl }) => {
     const url = new URL("/api/search", baseUrl);
@@ -165,6 +215,81 @@ test("protocol persona route returns an agent-facing recommender persona", async
     assert.equal(found.body.persona.commercialRole, "affiliate_publisher");
     assert.equal(missing.response.status, 404);
     assert.deepEqual(missing.body, { error: "persona_not_found" });
+  });
+});
+
+test("register draft API imports valid beta drafts and reports validation errors", async () => {
+  await withSeededServer(async ({ baseUrl, registryPath }) => {
+    const draft = {
+      kind: "AgentCartRegistrationDraft",
+      accountEmail: "Creator@Example.COM",
+      personas: [
+        {
+          kind: "RecommenderPersona",
+          handle: "junho-baek",
+          displayName: "백준호",
+          personaName: "자취생 생존 큐레이터 백준호",
+          adviceMode: "insight_first",
+          commercialRole: "affiliate_publisher",
+          disclosurePolicy: {
+            requiredDisclosureText: "추천에는 커미션 링크가 포함될 수 있습니다.",
+          },
+        },
+      ],
+      entries: [
+        {
+          kind: "CurationEntry",
+          title: "API 등록 테스트 라면",
+          originalUrl: "https://link.coupang.com/a/apiRamen",
+          category: "grocery",
+          curator: { handle: "junho-baek", displayName: "백준호" },
+          bestFor: ["자취생 비상식량"],
+          notFor: ["나트륨 민감"],
+          curationNote: "빠르게 한 끼를 만들 수 있습니다.",
+          disclosureHint: "커미션 링크가 포함될 수 있습니다.",
+        },
+      ],
+    };
+    const created = await fetchJson(`${baseUrl}/api/register-draft`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(draft),
+    });
+    const missingEmail = await fetchJson(`${baseUrl}/api/register-draft`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...draft, accountEmail: "" }),
+    });
+    const tooMany = await fetchJson(`${baseUrl}/api/register-draft`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...draft,
+        entries: Array.from({ length: 31 }, (_, index) => ({
+          ...draft.entries[0],
+          title: `API 등록 초과 ${index + 1}`,
+          originalUrl: `https://link.coupang.com/a/apiTooMany${index + 1}`,
+        })),
+      }),
+    });
+    const registry = await loadRegistry(registryPath);
+    const card = registry.cards.find((candidate) => candidate.title === "API 등록 테스트 라면");
+
+    assert.equal(created.response.status, 201);
+    assert.equal(created.body.registered.cards, 1);
+    assert.equal(created.body.registered.personas, 1);
+    assert.equal(card.accountEmail, "creator@example.com");
+    assert.equal(card.visibility, "curator_scoped");
+    assert.equal(missingEmail.response.status, 400);
+    assert.deepEqual(missingEmail.body, {
+      error: "account_email_required",
+      errors: ["account_email_required"],
+    });
+    assert.equal(tooMany.response.status, 400);
+    assert.deepEqual(tooMany.body, {
+      error: "entry_limit_exceeded",
+      errors: ["entry_limit_exceeded"],
+    });
   });
 });
 
