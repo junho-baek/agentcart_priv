@@ -42,6 +42,8 @@ Produce one `AgentCartRegistrationDraft` that contains registration-ready `perso
 ```json
 {
   "kind": "AgentCartRegistrationDraft",
+  "accountEmail": "creator@example.com",
+  "visibility": "curator_scoped",
   "personas": [],
   "entries": []
 }
@@ -54,6 +56,21 @@ npm run agentcart -- register:draft <draft.json>
 ```
 
 Draft objects still use the following protocol structures.
+
+## Beta Registration Limits
+
+Collect email before registration and put it in `accountEmail`.
+
+Default free beta limits:
+
+- 1 curator persona per account
+- 30 product or link entries per account
+- default visibility: `curator_scoped`
+- default publication status: `draft`
+
+Do not promise global search exposure. Free beta drafts are meant for curator-scoped copy-paste prompts first; public or global discovery requires later review, approval, or a paid/approved tier.
+
+Do not split one creator across multiple emails to bypass limits. If a creator, brand, or operator asks to register more than 30 links, stop and propose a smaller curated set or a paid/approved tier instead.
 
 ### 1. CurationEntry
 
@@ -128,6 +145,10 @@ Run these checks before returning the final registration draft:
 - Unsupported "best price", live stock, seller verification, warranty, or medical claims: move them to prohibited claims unless evidence is present.
 - First-party links prioritized without disclosure: add first-party priority to `DisclosurePolicy`.
 - Persona sounds useful but product evidence is thin: keep the voice, but mark weak context and avoid overconfident recommendation language.
+- Creator asks to register 80 links for free: keep the draft under 30 entries and ask which links matter most.
+- Brand wants public global exposure immediately: keep `visibility` as `curator_scoped` or `public_candidate`; do not promise publication.
+- Operator proposes splitting one creator across multiple emails: refuse the bypass and keep one account identity.
+- Entry lacks disclosure but the user wants fast import: do not register it until the relationship is clear.
 
 ## Safety Boundaries
 
@@ -146,6 +167,9 @@ Return concise Markdown plus one JSON-like registration draft:
 ```json
 {
   "kind": "AgentCartRegistrationDraft",
+  "accountEmail": "junho@example.com",
+  "visibility": "curator_scoped",
+  "publicationStatus": "draft",
   "personas": [
     {
       "kind": "RecommenderPersona",

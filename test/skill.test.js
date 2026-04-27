@@ -141,3 +141,17 @@ test("checked-in curator registration skill documents protocol structures and di
   assert.match(content, /Commercial actor persona/);
   assert.match(content, /Do not hide brand, sponsor, affiliate, or merchant relationships/);
 });
+
+test("checked-in curator registration skill documents beta registration limits", async () => {
+  const content = await readFile(
+    new URL("../skills/agentcart-curator-registration-skill.md", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(content, /accountEmail/);
+  assert.match(content, /30/);
+  assert.match(content, /curator_scoped/);
+  assert.match(content, /Do not promise global search exposure/);
+  assert.match(content, /Collect email before registration/);
+  assert.match(content, /Do not split one creator across multiple emails to bypass limits/);
+});
