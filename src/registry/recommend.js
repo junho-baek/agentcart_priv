@@ -48,8 +48,10 @@ function cardPositiveText(card) {
   return [
     card.title,
     card.category,
+    card.campaignHandle,
     ...normalizeArray(card.bestFor),
     ...normalizeArray(card.searchKeywords),
+    ...normalizeArray(card.claimNotes),
     card.curationNote,
   ].join(" ");
 }
@@ -77,6 +79,22 @@ function hasHttpsUrl(card) {
   } catch {
     return false;
   }
+}
+
+function hasRiskFlag(card, riskFlag) {
+  return normalizeArray(card.riskFlags).includes(riskFlag);
+}
+
+function needsSkincareSafetyNote(card) {
+  return card.category === "skincare" || hasRiskFlag(card, "health_claim_sensitive");
+}
+
+function campaignLabelFor(card) {
+  return normalizeArray(card.searchKeywords).find((keyword) => {
+    const normalizedKeyword = String(keyword ?? "").trim();
+
+    return isPresent(normalizedKeyword) && normalizedKeyword !== card.campaignHandle;
+  });
 }
 
 function normalizeSearchArgs(queryOrCards, cardsOrQuery, context) {
@@ -242,6 +260,23 @@ export function formatRecommendationResponse(cards, query = "", options = {}) {
 
     if (isPresent(card.curationNote) && card.curationNote !== curatorOneLiner) {
       lines.push(`추천 이유: ${card.curationNote}`);
+    }
+
+    if (isPresent(card.campaignHandle)) {
+      const campaignLabel = campaignLabelFor(card);
+      const displayCampaign = isPresent(campaignLabel)
+        ? `${card.campaignHandle} (${campaignLabel})`
+        : card.campaignHandle;
+
+      lines.push(`캠페인: ${displayCampaign}`);
+    }
+
+    for (const claimNote of normalizeArray(card.claimNotes)) {
+      lines.push(`주의: ${claimNote}`);
+    }
+
+    if (needsSkincareSafetyNote(card)) {
+      lines.push("스킨케어 안전: patch test first; this is not medical advice.");
     }
 
     lines.push(

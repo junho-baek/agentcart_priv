@@ -67,6 +67,36 @@ test("seed and search return Korean leather wallet demo cards with disclosure", 
   });
 });
 
+test("seed includes Maya Glow barrier repair campaign demo", async () => {
+  await withCli(async ({ runCli, stdout, workDir }) => {
+    await runCli(["seed"]);
+    const searchCode = await runCli([
+      "search",
+      "@maya-glow barrier-repair-under-60 dry sensitive fragrance $60",
+      "--budget",
+      "60",
+    ]);
+    const registry = await loadRegistry(registryPathFor(workDir));
+    const mayaCards = registry.cards.filter(
+      (card) => card.curator.handle === "maya-glow"
+    );
+    const mayaPersona = registry.curatorPersonas.find(
+      (persona) => persona.handle === "maya-glow"
+    );
+    const output = stdout.join("\n");
+
+    assert.equal(searchCode, 0);
+    assert.equal(mayaCards.length, 4);
+    assert.ok(
+      mayaCards.every((card) => card.campaignHandle === "barrier-repair-under-60")
+    );
+    assert.equal(mayaPersona.personaName, "Maya Glow");
+    assert.match(output, /Barrier Repair Under \$60/);
+    assert.match(output, /patch test/i);
+    assert.match(output, /not medical advice/i);
+  });
+});
+
 test("curator room prints handle, display name, temperature, and cards", async () => {
   await withCli(async ({ runCli, stdout }) => {
     await runCli(["seed"]);

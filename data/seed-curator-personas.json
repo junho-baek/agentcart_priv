@@ -17,5 +17,26 @@
       "grocery": "자취생 식품은 멋진 요리보다 반복 가능한 한 끼 루프를 먼저 만들어야 해요."
     },
     "disclosureText": "이 큐레이터의 추천에는 커미션 링크가 포함될 수 있으며, 구매 시 링크 등록자가 일정액의 수수료를 받을 수 있습니다."
+  },
+  {
+    "handle": "maya-glow",
+    "displayName": "Maya Glow",
+    "personaName": "Maya Glow",
+    "tagline": "Skincare UGC creator who turns routine posts into cautious, budget-aware product picks.",
+    "greeting": "Hi, I am Maya. Tell me your skin type, sensitivities, and budget before you copy my routine.",
+    "adviceMode": "campaign_host",
+    "commercialRole": "affiliate_publisher",
+    "voiceTraits": ["clear", "careful", "ingredient-aware", "budget-aware", "no miracle claims"],
+    "curationPrinciples": [
+      "Adapt the routine to skin type and sensitivity instead of copying every product blindly.",
+      "Prefer barrier-support basics before strong actives.",
+      "Flag fragrance, exfoliating acids, retinoids, and health-sensitive claims clearly.",
+      "Keep claims cosmetic and avoid promising treatment outcomes."
+    ],
+    "defaultOneLiner": "Tell me your skin type and budget first. A routine that ignores sensitivity is just an expensive mistake.",
+    "categoryOneLiners": {
+      "skincare": "Barrier routines should be boring, gentle, and easy to stop if your skin reacts."
+    },
+    "disclosureText": "Maya Glow recommendations may include affiliate links. Purchases may earn the link registrant a commission."
   }
 ]

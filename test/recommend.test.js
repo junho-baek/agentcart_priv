@@ -138,6 +138,31 @@ test("searchCards normalizes Korean leather wallet compound queries for shared r
   );
 });
 
+test("searchCards recalls campaign handles and claim notes", () => {
+  const campaignCard = recommendationCard({
+    title: "Ceramide Barrier Moisturizer",
+    category: "skincare",
+    originalUrl: "https://www.amazon.com/dp/B0MAYACREAM",
+    priceAmount: 22,
+    currency: "USD",
+    curator: { handle: "maya-glow" },
+    campaignHandle: "barrier-repair-under-60",
+    bestFor: ["dry sensitive skin"],
+    notFor: ["very oily skin"],
+    searchKeywords: ["Barrier Repair Under $60"],
+    curationNote: "The anchor moisturizer step.",
+    claimNotes: ["Cosmetic moisture barrier support only; not medical treatment."],
+    riskFlags: ["health_claim_sensitive"],
+    disclosure: "This may be an affiliate link.",
+  });
+
+  const results = searchCards("barrier-repair-under-60 medical treatment", [campaignCard], {
+    budgetAmount: 60,
+  });
+
+  assert.equal(results[0].title, "Ceramide Barrier Moisturizer");
+});
+
 test("formatRecommendationResponse discloses commission and includes open and curator commands", () => {
   const [wallet] = searchCards("10만원 이하 leather wallet 추천해줘!", fixtureCards(), {
     budgetAmount: 100000,
@@ -155,6 +180,41 @@ test("formatRecommendationResponse discloses commission and includes open and cu
   assert.match(response, /큐레이터 페르소나: wallet_curator \(@wallet_curator\)/);
   assert.match(response, /열기 전 확인: agentcart open 블랙-소가죽-반지갑/);
   assert.match(response, /큐레이터 한마디: 카드 수납이 많고 선물 포장이 무난함/);
+});
+
+test("formatRecommendationResponse shows campaign and skincare claim notes", () => {
+  const card = recommendationCard({
+    title: "Ceramide Barrier Moisturizer",
+    category: "skincare",
+    originalUrl: "https://www.amazon.com/dp/B0MAYACREAM",
+    priceAmount: 22,
+    currency: "USD",
+    curator: { handle: "maya-glow" },
+    campaignHandle: "barrier-repair-under-60",
+    bestFor: ["dry sensitive skin"],
+    notFor: ["very oily skin"],
+    searchKeywords: ["Barrier Repair Under $60"],
+    curationNote: "The anchor moisturizer step.",
+    claimNotes: ["Cosmetic moisture barrier support only; not medical treatment."],
+    riskFlags: ["health_claim_sensitive"],
+    disclosure: "This may be an affiliate link.",
+  });
+
+  const response = formatRecommendationResponse([card], "barrier-repair-under-60", {
+    curatorPersonas: [
+      {
+        handle: "maya-glow",
+        personaName: "Maya Glow",
+        defaultOneLiner:
+          "Tell me your skin type and budget first. A routine that ignores sensitivity is just an expensive mistake.",
+      },
+    ],
+  });
+
+  assert.match(response, /캠페인: barrier-repair-under-60/);
+  assert.match(response, /주의: Cosmetic moisture barrier support only; not medical treatment\./);
+  assert.match(response, /patch test/i);
+  assert.match(response, /not medical advice/i);
 });
 
 test("formatRecommendationResponse uses curator persona one-liners when available", () => {

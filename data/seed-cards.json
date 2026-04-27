@@ -158,5 +158,81 @@
     "searchKeywords": ["비건 레더 지갑", "미니 지갑", "동물성 소재 없는 지갑"],
     "curationNote": "소재 취향이 분명한 사람에게 추천하기 좋은 직접 브랜드 상품입니다.",
     "riskFlags": []
+  },
+  {
+    "title": "Fragrance-Free Gentle Cleanser",
+    "category": "skincare",
+    "originalUrl": "https://www.amazon.com/dp/B0MAYACLEANSE",
+    "priceAmount": 12,
+    "currency": "USD",
+    "curator": {
+      "handle": "maya-glow",
+      "displayName": "Maya Glow"
+    },
+    "campaignHandle": "barrier-repair-under-60",
+    "bestFor": ["dry sensitive skin", "barrier repair routine", "fragrance-free first cleanse"],
+    "notFor": ["makeup removal as only cleanse", "users who want exfoliating cleanser"],
+    "searchKeywords": ["barrier-repair-under-60", "Barrier Repair Under $60", "gentle cleanser", "dry sensitive skin", "fragrance sensitive"],
+    "curationNote": "Start with a boring fragrance-free cleanser so the routine does not irritate before moisturizer even starts.",
+    "claimNotes": ["Cosmetic cleansing support only; not acne, eczema, or dermatitis treatment."],
+    "riskFlags": ["health_claim_sensitive"],
+    "disclosure": "This may be an affiliate link; purchases may earn the link registrant a commission."
+  },
+  {
+    "title": "Hydrating Serum With Glycerin",
+    "category": "skincare",
+    "originalUrl": "https://brand.example/products/glycerin-serum",
+    "priceAmount": 16,
+    "currency": "USD",
+    "curator": {
+      "handle": "maya-glow",
+      "displayName": "Maya Glow"
+    },
+    "campaignHandle": "barrier-repair-under-60",
+    "bestFor": ["dry skin", "dehydrated feeling", "simple barrier routine"],
+    "notFor": ["users avoiding humectant serums", "users who want active exfoliation"],
+    "searchKeywords": ["barrier-repair-under-60", "Barrier Repair Under $60", "hydrating serum", "glycerin", "dry skin"],
+    "curationNote": "A simple hydrating layer can help the routine feel less tight without jumping to strong actives.",
+    "claimNotes": ["Cosmetic hydration support only; does not treat medical skin conditions."],
+    "riskFlags": ["health_claim_sensitive"],
+    "disclosure": "This may be an affiliate link; purchases may earn the link registrant a commission."
+  },
+  {
+    "title": "Ceramide Barrier Moisturizer",
+    "category": "skincare",
+    "originalUrl": "https://www.amazon.com/dp/B0MAYACREAM",
+    "priceAmount": 22,
+    "currency": "USD",
+    "curator": {
+      "handle": "maya-glow",
+      "displayName": "Maya Glow"
+    },
+    "campaignHandle": "barrier-repair-under-60",
+    "bestFor": ["dry sensitive skin", "barrier repair routine", "plain moisturizer"],
+    "notFor": ["very oily skin", "users who want active exfoliation"],
+    "searchKeywords": ["barrier-repair-under-60", "Barrier Repair Under $60", "ceramide moisturizer", "barrier cream", "dry sensitive skin"],
+    "curationNote": "This is the anchor step: a plain moisturizer that keeps the routine calm and budget-contained.",
+    "claimNotes": ["Cosmetic moisture barrier support only; not medical treatment."],
+    "riskFlags": ["health_claim_sensitive"],
+    "disclosure": "This may be an affiliate link; purchases may earn the link registrant a commission."
+  },
+  {
+    "title": "Mineral Sunscreen For Sensitive Skin",
+    "category": "skincare",
+    "originalUrl": "https://brand.example/products/mineral-sunscreen",
+    "priceAmount": 18,
+    "currency": "USD",
+    "curator": {
+      "handle": "maya-glow",
+      "displayName": "Maya Glow"
+    },
+    "campaignHandle": "barrier-repair-under-60",
+    "bestFor": ["daytime barrier routine", "sensitive skin", "mineral sunscreen users"],
+    "notFor": ["night routine only", "users who dislike mineral finish"],
+    "searchKeywords": ["barrier-repair-under-60", "Barrier Repair Under $60", "mineral sunscreen", "sensitive skin", "dry skin"],
+    "curationNote": "If this is a daytime routine, sunscreen matters more than adding another trendy active.",
+    "claimNotes": ["Use as labeled; does not replace medical advice for photosensitivity or skin disease."],
+    "riskFlags": ["health_claim_sensitive"],
+    "disclosure": "This may be an affiliate link; purchases may earn the link registrant a commission."
   }
 ]
