@@ -18,6 +18,7 @@ test("createEmptyRegistry returns the initial registry shape with matching times
 
   assert.deepEqual(createEmptyRegistry(timestamp), {
     version: 1,
+    accounts: [],
     cards: [],
     curatorPersonas: [],
     feedbackEvents: [],

@@ -176,22 +176,143 @@ test("register draft imports persona and curation entries from a skill-produced 
       "utf8"
     );
 
-    const code = await runCli(["register:draft", draftPath]);
+    const code = await runCli(["register:draft", "--email", "Creator@Example.COM", draftPath]);
     const registry = await loadRegistry(registryPathFor(workDir));
     const card = registry.cards.find((candidate) => candidate.title === "테스트 등록 라면");
     const persona = registry.curatorPersonas.find(
       (candidate) => candidate.handle === "junho-baek"
     );
+    const account = registry.accounts.find(
+      (candidate) => candidate.email === "creator@example.com"
+    );
 
     assert.equal(code, 0);
     assert.match(stdout.join("\n"), /Registered draft: 1 persona, 1 card/);
+    assert.equal(account.id, "acct_creator_example_com");
     assert.equal(card.slug, "테스트-등록-라면");
     assert.equal(card.platform, "coupang");
+    assert.equal(card.accountEmail, "creator@example.com");
+    assert.equal(card.visibility, "curator_scoped");
+    assert.equal(card.publicationStatus, "draft");
     assert.deepEqual(card.bestFor, ["자취생 비상식량"]);
     assert.deepEqual(card.searchKeywords, ["자취 라면", "비상식량"]);
     assert.equal(persona.personaName, "자취생 생존 큐레이터 백준호");
     assert.equal(persona.commercialRole, "affiliate_publisher");
+    assert.equal(persona.accountEmail, "creator@example.com");
     assert.match(persona.disclosureText, /커미션 링크/);
+  });
+});
+
+test("register draft requires account email before writing", async () => {
+  await withCli(async ({ runCli, stderr, workDir }) => {
+    const draftPath = join(workDir, "registration-draft.json");
+    await writeFile(
+      draftPath,
+      JSON.stringify({
+        kind: "AgentCartRegistrationDraft",
+        entries: [
+          {
+            kind: "CurationEntry",
+            title: "이메일 없는 상품",
+            originalUrl: "https://link.coupang.com/a/noEmail",
+            category: "grocery",
+            curator: { handle: "junho-baek" },
+            bestFor: ["자취생"],
+            notFor: ["나트륨 민감"],
+            curationNote: "테스트",
+            disclosureHint: "커미션 링크가 포함될 수 있습니다.",
+          },
+        ],
+      }),
+      "utf8"
+    );
+
+    const code = await runCli(["register:draft", draftPath]);
+    const registry = await loadRegistry(registryPathFor(workDir));
+
+    assert.equal(code, 1);
+    assert.match(stderr.join("\n"), /account_email_required/);
+    assert.equal(registry.cards.length, 0);
+  });
+});
+
+test("register draft enforces the 30 link free beta limit before writing", async () => {
+  await withCli(async ({ runCli, stderr, workDir }) => {
+    const draftPath = join(workDir, "too-many-links.json");
+    const entries = Array.from({ length: 31 }, (_, index) => ({
+      kind: "CurationEntry",
+      title: `테스트 상품 ${index + 1}`,
+      originalUrl: `https://link.coupang.com/a/tooMany${index + 1}`,
+      category: "grocery",
+      curator: { handle: "junho-baek" },
+      bestFor: ["자취생"],
+      notFor: ["나트륨 민감"],
+      curationNote: "테스트",
+      disclosureHint: "커미션 링크가 포함될 수 있습니다.",
+    }));
+    await writeFile(
+      draftPath,
+      JSON.stringify({
+        kind: "AgentCartRegistrationDraft",
+        accountEmail: "creator@example.com",
+        entries,
+      }),
+      "utf8"
+    );
+
+    const code = await runCli(["register:draft", draftPath]);
+    const registry = await loadRegistry(registryPathFor(workDir));
+
+    assert.equal(code, 1);
+    assert.match(stderr.join("\n"), /entry_limit_exceeded/);
+    assert.equal(registry.cards.length, 0);
+  });
+});
+
+test("register draft counts existing account cards toward the free beta limit", async () => {
+  await withCli(async ({ runCli, stderr, workDir }) => {
+    const firstDraft = join(workDir, "first-draft.json");
+    const secondDraft = join(workDir, "second-draft.json");
+    const makeEntries = (count, prefix) =>
+      Array.from({ length: count }, (_, index) => ({
+        kind: "CurationEntry",
+        title: `${prefix} ${index + 1}`,
+        originalUrl: `https://link.coupang.com/a/${prefix}${index + 1}`,
+        category: "grocery",
+        curator: { handle: "junho-baek" },
+        bestFor: ["자취생"],
+        notFor: ["나트륨 민감"],
+        curationNote: "테스트",
+        disclosureHint: "커미션 링크가 포함될 수 있습니다.",
+      }));
+
+    await writeFile(
+      firstDraft,
+      JSON.stringify({
+        kind: "AgentCartRegistrationDraft",
+        accountEmail: "creator@example.com",
+        entries: makeEntries(30, "first"),
+      }),
+      "utf8"
+    );
+    await writeFile(
+      secondDraft,
+      JSON.stringify({
+        kind: "AgentCartRegistrationDraft",
+        accountEmail: "creator@example.com",
+        entries: makeEntries(1, "second"),
+      }),
+      "utf8"
+    );
+
+    const firstCode = await runCli(["register:draft", firstDraft]);
+    const secondCode = await runCli(["register:draft", secondDraft]);
+    const registry = await loadRegistry(registryPathFor(workDir));
+
+    assert.equal(firstCode, 0);
+    assert.equal(secondCode, 1);
+    assert.match(stderr.join("\n"), /account_entry_limit_exceeded/);
+    assert.equal(registry.cards.length, 30);
   });
 });
 

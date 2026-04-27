@@ -9,13 +9,22 @@ import {
   buildRecommenderPersona,
   validateProtocolObject,
 } from "../registry/protocol.js";
+import {
+  FREE_BETA_LIMITS,
+  entriesFromRegistrationDraft,
+  normalizeAccountEmail,
+  personasFromRegistrationDraft,
+  validateRegistrationDraft,
+} from "../registry/registration.js";
 import { formatRecommendationResponse, searchCards } from "../registry/recommend.js";
 import {
   addCard,
   addCuratorPersona,
+  countAccountCards,
   loadRegistry,
   registryPathFor,
   seedRegistry,
+  upsertAccount,
 } from "../registry/store.js";
 import { writeSkill } from "../registry/skill.js";
 
@@ -252,40 +261,6 @@ async function runSubmit(args, { workDir, stdout, stderr }) {
   return 0;
 }
 
-function toArray(value) {
-  return Array.isArray(value) ? value : [];
-}
-
-function entriesFromRegistrationDraft(draft) {
-  if (Array.isArray(draft)) {
-    return draft.filter((item) => item?.kind === "CurationEntry");
-  }
-
-  if (draft?.kind === "CurationEntry") {
-    return [draft];
-  }
-
-  return [
-    ...toArray(draft?.entries),
-    ...toArray(draft?.curationEntries),
-  ].filter((entry) => entry?.kind === "CurationEntry" || entry?.title);
-}
-
-function personasFromRegistrationDraft(draft) {
-  if (Array.isArray(draft)) {
-    return draft.filter((item) => item?.kind === "RecommenderPersona");
-  }
-
-  if (draft?.kind === "RecommenderPersona") {
-    return [draft];
-  }
-
-  return [
-    ...toArray(draft?.personas),
-    ...toArray(draft?.recommenderPersonas),
-  ].filter((persona) => persona?.kind === "RecommenderPersona" || persona?.handle);
-}
-
 function cardInputFromCurationEntry(entry) {
   return {
     title: entry.title,
@@ -303,6 +278,9 @@ function cardInputFromCurationEntry(entry) {
     currency: entry.currency,
     searchKeywords: entry.searchKeywords,
     riskFlags: entry.riskFlags,
+    accountEmail: entry.accountEmail,
+    visibility: entry.visibility,
+    publicationStatus: entry.publicationStatus,
   };
 }
 
@@ -321,6 +299,7 @@ function personaInputFromRecommenderPersona(persona) {
     categoryOneLiners: persona.categoryOneLiners,
     disclosureText:
       persona.disclosureText ?? persona.disclosurePolicy?.requiredDisclosureText,
+    accountEmail: persona.accountEmail,
     firstPartyPriority: persona.disclosurePolicy?.firstPartyPriority,
     competitorInclusionPolicy: persona.disclosurePolicy?.competitorInclusionPolicy,
     sponsoredCampaign: persona.disclosurePolicy?.sponsoredCampaign,
@@ -347,19 +326,55 @@ async function runRegisterDraft(args, { workDir, stdout, stderr }) {
   }
 
   const registryPath = registryPathFor(workDir);
+  const accountEmail = normalizeAccountEmail(flagValue(args, "--email") ?? draft.accountEmail);
+  const validation = validateRegistrationDraft(draft, {
+    ...FREE_BETA_LIMITS,
+    accountEmail,
+  });
+
+  if (!validation.ok) {
+    stderr(`Registration draft invalid: ${validation.errors.join(", ")}`);
+    return 1;
+  }
+
+  const registry = await loadRegistry(registryPath);
+  const existingAccountCardCount = countAccountCards(registry, accountEmail);
+
+  if (existingAccountCardCount + validation.entryCount > FREE_BETA_LIMITS.maxEntries) {
+    stderr("Registration draft invalid: account_entry_limit_exceeded");
+    return 1;
+  }
+
   const personas = personasFromRegistrationDraft(draft);
   const entries = entriesFromRegistrationDraft(draft);
   const registeredPersonas = [];
   const registeredCards = [];
 
+  await upsertAccount(registryPath, {
+    email: accountEmail,
+    plan: "free_beta",
+    maxPersonas: FREE_BETA_LIMITS.maxPersonas,
+    maxEntries: FREE_BETA_LIMITS.maxEntries,
+  });
+
   for (const persona of personas) {
     registeredPersonas.push(
-      await addCuratorPersona(registryPath, personaInputFromRecommenderPersona(persona))
+      await addCuratorPersona(registryPath, {
+        ...personaInputFromRecommenderPersona(persona),
+        accountEmail,
+      })
     );
   }
 
   for (const entry of entries) {
-    registeredCards.push(await addCard(registryPath, cardInputFromCurationEntry(entry)));
+    registeredCards.push(
+      await addCard(registryPath, {
+        ...cardInputFromCurationEntry(entry),
+        accountEmail,
+        visibility: entry.visibility ?? draft.visibility ?? "curator_scoped",
+        publicationStatus: entry.publicationStatus ?? draft.publicationStatus ?? "draft",
+      })
+    );
   }
 
   if (registeredPersonas.length === 0 && registeredCards.length === 0) {

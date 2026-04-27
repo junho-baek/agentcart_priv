@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { accountIdForEmail, normalizeAccountEmail } from "./registration.js";
 import { createCard, validateCard } from "./schema.js";
 
 const SEED_CREATED_AT = "2026-04-24T00:00:00.000Z";
@@ -50,6 +51,9 @@ function createStoredCard(input, createdAt) {
     currency: normalizedInput.currency,
     searchKeywords: normalizedInput.searchKeywords,
     riskFlags: normalizedInput.riskFlags,
+    accountEmail: normalizeAccountEmail(normalizedInput.accountEmail),
+    visibility: String(normalizedInput.visibility ?? "").trim(),
+    publicationStatus: String(normalizedInput.publicationStatus ?? "").trim(),
   };
 }
 
@@ -62,6 +66,7 @@ export function registryPathFor(workDir = process.cwd()) {
 export function createEmptyRegistry(now = new Date().toISOString()) {
   return {
     version: 1,
+    accounts: [],
     cards: [],
     curatorPersonas: [],
     feedbackEvents: [],
@@ -95,6 +100,7 @@ function createStoredCuratorPersona(input, createdAt) {
         ? input.categoryOneLiners
         : {},
     disclosureText: String(input.disclosureText ?? "").trim(),
+    accountEmail: normalizeAccountEmail(input.accountEmail),
     firstPartyPriority: Boolean(input.firstPartyPriority),
     competitorInclusionPolicy: String(input.competitorInclusionPolicy ?? "may_include").trim(),
     sponsoredCampaign: input.sponsoredCampaign ?? false,
@@ -158,6 +164,56 @@ export async function addCard(path, input) {
   await saveRegistry(path, registry);
 
   return card;
+}
+
+export function countAccountCards(registry, accountEmail) {
+  const normalizedEmail = normalizeAccountEmail(accountEmail);
+
+  return (Array.isArray(registry.cards) ? registry.cards : []).filter(
+    (card) => normalizeAccountEmail(card.accountEmail) === normalizedEmail
+  ).length;
+}
+
+export async function upsertAccount(path, input) {
+  const registry = await loadRegistry(path);
+  const email = normalizeAccountEmail(input.email);
+
+  if (!email) {
+    throw new Error("Invalid account: email_required");
+  }
+
+  let account = {
+    id: input.id ?? accountIdForEmail(email),
+    email,
+    plan: String(input.plan ?? "free_beta").trim(),
+    maxPersonas: input.maxPersonas,
+    maxEntries: input.maxEntries,
+    createdAt: input.createdAt ?? new Date().toISOString(),
+    updatedAt: input.updatedAt ?? new Date().toISOString(),
+  };
+  const accounts = Array.isArray(registry.accounts) ? registry.accounts : [];
+  const existingIndex = accounts.findIndex(
+    (existingAccount) => normalizeAccountEmail(existingAccount.email) === email
+  );
+
+  if (existingIndex === -1) {
+    accounts.push(account);
+  } else {
+    const existingAccount = accounts[existingIndex];
+    account = {
+      ...existingAccount,
+      ...account,
+      id: existingAccount.id ?? account.id,
+      createdAt: existingAccount.createdAt ?? account.createdAt,
+      updatedAt: nextTimestampAfter(existingAccount.updatedAt ?? existingAccount.createdAt),
+    };
+    accounts[existingIndex] = account;
+  }
+
+  registry.accounts = accounts;
+  await saveRegistry(path, registry);
+
+  return account;
 }
 
 export async function addCuratorPersona(path, input) {
@@ -243,6 +299,7 @@ export async function seedRegistry(path = registryPathFor(), options = {}) {
   }
 
   registry.cards = cards;
+  registry.accounts = Array.isArray(registry.accounts) ? registry.accounts : [];
   for (const seedCuratorPersona of seedCuratorPersonas.map((persona) =>
     createStoredCuratorPersona(persona, SEED_CREATED_AT)
   )) {
