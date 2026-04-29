@@ -48,6 +48,49 @@ Business model:
 
 Brand personas must be explicit. If a persona represents a brand, store, or sponsored campaign, AgentCart should disclose that relationship, whether the persona prioritizes first-party products, and whether recommendations include or exclude competing products.
 
+## AI-Native Campaign Kit For Commerce Brands
+
+The brand wedge is not "prepare for a vague AI future." Commerce brands already spend money on influencer campaigns, affiliate links, product catalog feeds, paid search, paid social, landing pages, and seasonal campaign pages. AgentCart converts those existing campaign assets into an AI-native campaign kit that shopping agents can read, explain, and act on.
+
+The current status quo:
+
+- Influencer and UGC posts send users to Linktree, Inflearn-style profile links, coupon codes, UTM links, smart-store pages, or campaign landing pages.
+- Affiliate and performance teams manage creator links, product feeds, and attribution in separate tools.
+- Product catalogs are written for web surfaces, ad platforms, and search engines, not for AI agents that need recommendation context.
+- When a user asks an agent what to buy, the campaign context, recommender identity, disclosure, fit rules, and claim boundaries usually disappear.
+
+AgentCart's brand promise:
+
+```text
+Turn an existing commerce campaign into something AI shopping agents can call.
+```
+
+Example:
+
+```text
+RankingDak runs a 10-creator campaign for high-protein lunch boxes.
+
+Today:
+Creator post -> link in bio / coupon code / UTM link
+
+With AgentCart:
+Creator post -> "Want a 5-day lunch plan? Paste this into your AI agent."
+
+agentcart-shopping에서 @rankingdak-mealplan 페르소나로 high-protein-lunch-week 캠페인 추천해줘.
+My goal is fat loss, office lunch, and budget ₩60,000.
+```
+
+For brands such as RankingDak, Meatry, or Musinsa Standard, the buying reason is practical: make campaign products understandable to AI agents, preserve official product context, control disclosure and claim boundaries, define whether competing products may appear, and measure which creator prompts or campaign handles drive shopping intent.
+
+The best early brand customers are purpose-driven repeat-purchase commerce teams, especially food, fitness, wellness, skincare, and basic apparel. RankingDak or Meatry-style brands are a cleaner first wedge than broad fashion catalogs because user intent is concrete: protein, calories, office lunch, budget, storage, taste, delivery, and routine fit. Musinsa Standard-style brand personas are promising later, but sizing, fit, inventory, returns, and styling taste make the first demo harder.
+
+The core B2B sale is:
+
+```text
+AI-native campaign kit for commerce brands.
+Not a new ad format. A new campaign surface inside AI agents.
+```
+
 ## Beta Service Model
 
 AgentCart needs a hosted registry API and operational DB before it becomes a real service or monetization layer. The local JSON registry remains the development backend, but the service contract is account-based:
