@@ -192,6 +192,8 @@ The checked-in `skills/agentcart-curator-registration-skill.md` draft defines ho
 
 The curator-persona model was inspired by `openclone`: a persona/room style experience where a user can talk with a recognizable point of view, then receive useful actions from that context. AgentCart adapts that idea for commerce by attaching persona voice, product cards, affiliate disclosure, and purchase-assist handoff to the same curator experience.
 
+Operationally, AgentCart skills should be treated as a portable context layer for autonomous agents. The repository `skills/` files are canonical; runtime stores such as `~/.codex/skills` and `~/.hermes/skills` should mirror them for Codex or Hermes Agent workflows. See `wiki/analyses/agentcart-hermes-agent-integration.md` for the Codex, Hermes Agent, and GStack operating model.
+
 Skill-side gaps still not shipped:
 
 - `install-skill` currently writes the shopping skill only; the purchase-assist skill is checked in as a canonical skill file, but does not yet have a CLI installer target.

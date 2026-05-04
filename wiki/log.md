@@ -28,3 +28,8 @@ Append-only record of ingest, query, lint, and maintenance activity.
 
 - Tested a Coupang `바로구매` flow with Computer Use.
 - Captured the safe product boundary: agents can prepare checkout intent, but stop at login, sensitive data, CAPTCHA, payment method, and final order confirmation.
+
+## [2026-05-05] analysis | Hermes Agent integration
+
+- Added operational notes for mapping AgentCart skills into Codex, Hermes Agent, and GStack workflows.
+- Clarified that `~/.codex/skills` and `~/.hermes/skills` are runtime-specific mirrors while repository `skills/` remains canonical.

@@ -31,3 +31,5 @@ This file is the content-oriented catalog of the wiki.
 
 - [agentcart-platform-compliance-and-db-strategy](analyses/agentcart-platform-compliance-and-db-strategy.md): Office-hours style decision memo on platform compliance and DB strategy.
 - [agentcart-creator-affiliate-competitive-landscape](analyses/agentcart-creator-affiliate-competitive-landscape.md): Competitor landscape for creator affiliate links, storefronts, affiliate networks, and AgentCart positioning risk.
+- [agentcart-hermes-agent-integration](analyses/agentcart-hermes-agent-integration.md): Operational mapping from AgentCart skills to Codex, Hermes Agent, and GStack workflows.
+- [agentcart-supplier-revenue-strategy](analyses/agentcart-supplier-revenue-strategy.md): Supply expansion and monetization structure for creators, brands, merchants, and agencies.
