@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="AgentCart is an open-source commission-link shopping protocol for AI agents."
+      content="AgentCart is an agent-native commerce context layer for brands, creators, and merchants."
     />
-    <title>AgentCart - Commission-Link Shopping Protocol</title>
+    <title>AgentCart - Agent-Native Commerce Context Layer</title>
     <link rel="icon" href="/assets/logo-agentcart.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -49,21 +49,21 @@
           <div class="hero-copy">
             <p class="eyebrow">
               <span></span>
-              <span data-i18n="hero.kicker">Open-source skill install for shopping agents</span>
+              <span data-i18n="hero.kicker">Agent-native commerce context layer</span>
             </p>
             <h1 id="hero-title">
-              <span class="title-cream" data-i18n="hero.title1">Install the</span>
-              <span class="title-coral" data-i18n="hero.title2">shopping skill.</span>
+              <span class="title-cream" data-i18n="hero.title1">Make shopping links</span>
+              <span class="title-coral" data-i18n="hero.title2">readable by AI agents.</span>
             </h1>
             <p class="hero-subtitle" data-i18n="hero.subtitle">
-              AgentCart is the commission-link shopping protocol for AI agents.
-              Install the skill so your agent can recommend with disclosure,
-              curator context, and approval before any purchase path opens.
+              AgentCart packages curator personas, campaign rules, disclosures,
+              and product cards so brands, creators, and merchants can ship
+              context an agent can actually use.
             </p>
 
             <div class="hero-actions">
               <a class="primary-button" href="#install" data-i18n="hero.primary">Install the skill</a>
-              <a class="ghost-button" href="#register" data-i18n="hero.secondary">Register a link</a>
+              <a class="ghost-button" href="#register" data-i18n="hero.secondary">See the persona flow</a>
             </div>
           </div>
 
@@ -80,11 +80,11 @@
         <section id="install" class="panel install-panel">
           <div class="install-copy">
             <p class="section-kicker" data-i18n="install.kicker">Install AgentCart</p>
-            <h2 data-i18n="install.title">Put commission-link recommendations inside your agent chat.</h2>
+            <h2 data-i18n="install.title">Turn links into agent-readable product cards.</h2>
             <p data-i18n="install.body">
               AgentCart's frontend is the agent chat. Install the skill, run the
               registry API, and let Claude, Codex, or OpenClaw recommend with
-              disclosure and curator context.
+              disclosure, fit rules, and approval gates.
             </p>
           </div>
 
@@ -98,12 +98,12 @@
 
         <section id="register" class="panel register-panel">
           <div>
-            <p class="section-kicker" data-i18n="seller.kicker">For sellers and creators</p>
-            <h2 data-i18n="seller.title">Provide your link with the story agents need.</h2>
+            <p class="section-kicker" data-i18n="seller.kicker">For brands, creators, and merchants</p>
+            <h2 data-i18n="seller.title">Package your link with the context agents need.</h2>
             <p data-i18n="seller.body">
-              Add a product link, affiliate disclosure, target customer, benefits,
-              cautions, and price snapshot. Or tell Codex, Claude, or OpenClaw
-              to package it for you.
+              Add a product link, disclosure, target customer, fit notes, and
+              price context. Or let Codex, Claude, or OpenClaw draft the card for
+              you.
             </p>
           </div>
 
@@ -119,10 +119,10 @@
                   data-i18n-placeholder="seller.inputPlaceholder"
                   autocomplete="url"
                 />
-                <button type="submit" data-i18n="seller.packButton">Pack</button>
+                <button type="submit" data-i18n="seller.packButton">Draft card</button>
               </div>
               <p id="link-result" class="form-note" data-i18n="seller.formNote">
-                Preview: a reviewed AgentCart card will be created.
+                Preview: an agent-readable product card will be created.
               </p>
             </form>
 
@@ -134,7 +134,7 @@
 
             <div id="login" class="login-card">
               <div>
-                <p data-i18n="login.prompt">Already registered something?</p>
+                <p data-i18n="login.prompt">Already have a persona?</p>
                 <code id="cli-login-command">npm run agentcart -- login</code>
               </div>
               <button type="button" id="copy-login" data-i18n="login.copy">Copy CLI login</button>
@@ -145,11 +145,11 @@
         <section id="skill" class="skill-grid">
           <div class="skill-copy">
             <p class="section-kicker" data-i18n="buyer.kicker">For buyers</p>
-            <h2 data-i18n="buyer.title">Let your agent recommend through a buying protocol.</h2>
+            <h2 data-i18n="buyer.title">Let your agent read the context before it shops.</h2>
             <p data-i18n="buyer.body">
-              AgentCart gives shopping agents a process: ask context, compare
-              options, explain the tradeoffs, disclose incentives, and wait for
-              approval before opening a purchase link.
+              AgentCart gives shopping agents a protocol: ask for context,
+              compare options, explain tradeoffs, disclose incentives, and wait
+              for approval before opening a purchase link.
             </p>
           </div>
 
@@ -171,11 +171,11 @@ then read .agentcart/skills/agentcart-codex.md and use AgentCart whenever I ask 
         <section id="demo" class="demo-section" aria-labelledby="demo-title">
           <div>
             <p class="section-kicker" data-i18n="demo.kicker">Demo film</p>
-            <h2 id="demo-title" data-i18n="demo.title">Show the moment an agent shops better.</h2>
+            <h2 id="demo-title" data-i18n="demo.title">Show the moment an agent shops with context.</h2>
             <p data-i18n="demo.body">
               Watch the core loop: a buyer asks in chat, AgentCart returns three
-              disclosed recommendations, and the agent waits for approval before
-              opening a purchase path.
+              disclosed recommendations with fit notes, and the agent waits for
+              approval before opening a purchase path.
             </p>
           </div>
 
@@ -192,7 +192,7 @@ then read .agentcart/skills/agentcart-codex.md and use AgentCart whenever I ask 
           <div class="chat-demo" aria-label="AgentCart agent chat demo">
             <p class="chat-line user" data-i18n="demo.chatUser">Recommend a leather wallet under 100,000 won with AgentCart.</p>
             <p class="chat-line agent" data-i18n="demo.chatAgent">
-              First I will show the commission-link disclosure, then recommend only three options that fit your context.
+              First I will show the disclosure, then recommend only three options that fit your context and budget.
             </p>
           </div>
         </section>

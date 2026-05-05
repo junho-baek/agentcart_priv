@@ -4,10 +4,10 @@ import test from "node:test";
 
 const countOccurrences = (content, needle) => content.split(needle).length - 1;
 
-test("landing page positions AgentCart as an installable commission-link protocol", async () => {
+test("landing page positions AgentCart as an installable agent-native context layer", async () => {
   const html = await readFile(new URL("../web/index.html", import.meta.url), "utf8");
 
-  assert.match(html, /commission-link shopping protocol/);
+  assert.match(html, /agent-native commerce context layer/);
   assert.match(html, /npm run agentcart -- install-skill/);
   assert.match(html, /npm run agentcart -- login/);
   assert.match(html, /\.agentcart\/skills\/agentcart-codex\.md/);
@@ -17,7 +17,7 @@ test("landing page positions AgentCart as an installable commission-link protoco
   assert.match(html, /Recommend a leather wallet under 100,000 won with AgentCart\./);
   assert.match(
     html,
-    /First I will show the commission-link disclosure, then recommend only three options that fit your context\./
+    /First I will show the disclosure, then recommend only three options that fit your context and budget\./
   );
   assert.doesNotMatch(html, /This should become/);
   assert.doesNotMatch(html, /npx agentcart/);

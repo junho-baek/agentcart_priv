@@ -1,6 +1,6 @@
 # AgentCart
 
-AgentCart is a commission-link shopping protocol for AI agents. It lets creators and brands register a curator persona and a set of shopping links so AI agents can recommend those products with the persona's taste, context, and required affiliate disclosure.
+AgentCart is an agent-native commerce context layer for AI shopping agents. It lets creators, brands, and merchants register curator personas and product cards so agents can recommend products with the right taste, campaign context, and required disclosure.
 
 Curators register Coupang, Amazon, AliExpress, OliveYoung, self-owned shop links, and direct links with agent-readable context: who the product is best for, who should avoid it, why it is being recommended, the latest known price snapshot, disclosure text, and risk flags. Shopping agents can then recommend products with clear commission disclosure, curator persona context, direct links, reputation/trust temperature, price snapshot context, and policy or fit risk flags before opening any purchase link.
 
@@ -147,8 +147,11 @@ npm run agentcart -- search "@junho-baek 이번 주 식비 3만원 자취 장바
 Register an agent-generated creator or brand draft:
 
 ```sh
+npm run agentcart -- register:template --email creator@example.com --curator junho-baek --display-name "Junho Baek" --title "Starter Product" --url https://example.com/product --output ./registration-template.json
 npm run agentcart -- register:draft ./registration-draft.json
 ```
+
+`register:template` prints a JSON starter draft to stdout when `--output` is omitted, and you can customize the generated persona, entry fit, note, and disclosure fields with flags.
 
 Install the open-source shopping skill and run the local registry API:
 

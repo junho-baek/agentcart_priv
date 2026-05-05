@@ -1,8 +1,8 @@
 # AgentCart Landing
 
-Single-page landing site for installing the AgentCart open-source shopping skill.
+Single-page landing site for AgentCart's agent-native commerce context layer.
 
-AgentCart's landing page explains the local registry MVP, the agent skill install flow, and the product boundary for commission-link shopping recommendations.
+The landing page explains the local registry MVP, the agent skill install flow, and the product boundary for brands, creators, and merchants who want AI agents to read shopping context correctly.
 
 ## Run
 
