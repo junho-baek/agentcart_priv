@@ -12,15 +12,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <div class="site-shell">
-      <div class="orb orb-coral"></div>
-      <div class="orb orb-teal"></div>
+      <div class="orb orb-peach"></div>
+      <div class="orb orb-mint"></div>
 
       <header class="topbar">
         <a class="brand" href="/" aria-label="AgentCart home">
@@ -29,18 +29,15 @@
         </a>
         <nav aria-label="Primary navigation">
           <a href="#install" data-i18n="nav.install">Install</a>
-          <a href="#register" data-i18n="nav.register">Register</a>
-          <a href="#skill" data-i18n="nav.skill">Agent skill</a>
+          <a href="#personas" data-i18n="nav.personas">Use cases</a>
+          <a href="#reports" data-i18n="nav.reports">Reports</a>
           <a href="#demo" data-i18n="nav.demo">Demo</a>
         </nav>
-        <div class="topbar-actions">
-          <div class="language-switcher" aria-label="Language selector">
-            <button type="button" data-lang="en" aria-pressed="true">EN</button>
-            <button type="button" data-lang="ko" aria-pressed="false">KO</button>
-            <button type="button" data-lang="zh" aria-pressed="false">中文</button>
-            <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
-          </div>
-          <a class="topbar-cta" href="#login" data-i18n="nav.login">Login</a>
+        <div class="language-switcher" aria-label="Language selector">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-lang="ko" aria-pressed="false">KO</button>
+          <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+          <button type="button" data-lang="ja" aria-pressed="false">日本語</button>
         </div>
       </header>
 
@@ -49,151 +46,188 @@
           <div class="hero-copy">
             <p class="eyebrow">
               <span></span>
-              <span data-i18n="hero.kicker">Agent-native commerce context layer</span>
+              <span data-i18n="hero.kicker">Agent skill / commerce context</span>
             </p>
             <h1 id="hero-title">
-              <span class="title-cream" data-i18n="hero.title1">Make shopping links</span>
-              <span class="title-coral" data-i18n="hero.title2">readable by AI agents.</span>
+              <span class="title-cream" data-i18n="hero.title1">Give shopping links</span>
+              <span class="title-coral" data-i18n="hero.title2">a skill your agents can call.</span>
             </h1>
             <p class="hero-subtitle" data-i18n="hero.subtitle">
-              AgentCart packages curator personas, campaign rules, disclosures,
-              and product cards so brands, creators, and merchants can ship
-              context an agent can actually use.
+              Disclosure, fit notes, and approval gates in one calm layer.
             </p>
 
             <div class="hero-actions">
               <a class="primary-button" href="#install" data-i18n="hero.primary">Install the skill</a>
-              <a class="ghost-button" href="#register" data-i18n="hero.secondary">See the persona flow</a>
+              <a class="ghost-button" href="#demo" data-i18n="hero.secondary">See the flow</a>
+            </div>
+
+            <div class="hero-pills" aria-label="Supported user types">
+              <span data-i18n="hero.pill1">Brands</span>
+              <span data-i18n="hero.pill2">Creators</span>
+              <span data-i18n="hero.pill3">Merchants</span>
             </div>
           </div>
 
-          <div class="hero-card" aria-label="AgentCart mascot preview">
-            <div class="mascot-frame">
+          <div class="hero-visual">
+            <div class="mascot-frame" aria-label="AgentCart mascot preview">
               <img
                 src="/assets/logo-agentcart.png"
                 alt="AgentCart hermit crab mascot pulling a shopping cart"
               />
+              <div class="mascot-caption">
+                <span data-i18n="hero.mascotTag">Cute, but callable.</span>
+                <strong data-i18n="hero.mascotLine">The shopping layer agents actually want.</strong>
+              </div>
+            </div>
+
+            <div class="flow-bands" aria-label="Core workflow">
+              <span data-i18n="hero.flow1">install</span>
+              <span data-i18n="hero.flow2">draft</span>
+              <span data-i18n="hero.flow3">approve</span>
             </div>
           </div>
         </section>
 
         <section id="install" class="panel install-panel">
-          <div class="install-copy">
-            <p class="section-kicker" data-i18n="install.kicker">Install AgentCart</p>
-            <h2 data-i18n="install.title">Turn links into agent-readable product cards.</h2>
+          <div class="panel-copy">
+            <p class="section-kicker" data-i18n="install.kicker">Start with one command</p>
+            <h2 data-i18n="install.title">Install the skill, then keep the flow readable.</h2>
             <p data-i18n="install.body">
-              AgentCart's frontend is the agent chat. Install the skill, run the
-              registry API, and let Claude, Codex, or OpenClaw recommend with
-              disclosure, fit rules, and approval gates.
+              One command. One link. One draft the agent can use.
             </p>
           </div>
 
-          <div class="install-command-card">
+          <div class="command-card">
+            <div class="command-card-top">
+              <span data-i18n="install.commandLabel">Install command</span>
+              <button class="copy-button" id="copy-install" type="button" data-i18n="install.copy">
+                Copy install command
+              </button>
+            </div>
             <code id="install-command" data-i18n="install.command">npm run agentcart -- install-skill --target codex</code>
-            <button class="copy-button copy-install" id="copy-install" type="button" data-i18n="install.copy">
-              Copy install command
-            </button>
           </div>
+
+          <form class="link-card" id="try-form">
+            <label for="product-link" data-i18n="try.inputLabel">Paste a product or affiliate link</label>
+            <div class="input-row">
+              <input
+                id="product-link"
+                name="product-link"
+                type="url"
+                placeholder="https://example.com/product"
+                data-i18n-placeholder="try.inputPlaceholder"
+                autocomplete="url"
+              />
+              <button type="submit" data-i18n="try.action">Draft card</button>
+            </div>
+            <p id="try-result" class="form-note" data-i18n="try.note">
+              Preview: an agent-readable card is ready to draft.
+            </p>
+          </form>
         </section>
 
-        <section id="register" class="panel register-panel">
-          <div>
-            <p class="section-kicker" data-i18n="seller.kicker">For brands, creators, and merchants</p>
-            <h2 data-i18n="seller.title">Package your link with the context agents need.</h2>
-            <p data-i18n="seller.body">
-              Add a product link, disclosure, target customer, fit notes, and
-              price context. Or let Codex, Claude, or OpenClaw draft the card for
-              you.
+        <section id="personas" class="panel personas-panel">
+          <div class="panel-copy">
+            <p class="section-kicker" data-i18n="personas.kicker">Who this is for</p>
+            <h2 data-i18n="personas.title">Make the agent feel useful before it feels clever.</h2>
+            <p data-i18n="personas.body">
+              Different audiences need a slightly different kind of context.
+              Keep it obvious.
             </p>
           </div>
 
-          <div class="register-stack">
-            <form class="link-form" id="link-form">
-              <label for="product-link" data-i18n="seller.inputLabel">Product or affiliate link</label>
-              <div class="input-row">
-                <input
-                  id="product-link"
-                  name="product-link"
-                  type="url"
-                  placeholder="https://example.com/product"
-                  data-i18n-placeholder="seller.inputPlaceholder"
-                  autocomplete="url"
-                />
-                <button type="submit" data-i18n="seller.packButton">Draft card</button>
-              </div>
-              <p id="link-result" class="form-note" data-i18n="seller.formNote">
-                Preview: an agent-readable product card will be created.
-              </p>
-            </form>
+          <div class="persona-grid">
+            <article class="persona-card persona-brand">
+              <p class="persona-tag" data-i18n="brand.tag">Brand</p>
+              <h3 data-i18n="brand.title">Campaign rules + disclosure.</h3>
+              <p data-i18n="brand.body">Keep approvals, messaging, and incentives together.</p>
+              <span data-i18n="brand.hint">Clean campaign brief.</span>
+            </article>
 
-            <div class="seller-skill-card">
-              <span data-i18n="seller.commandLabel">Seller agent command</span>
-              <code id="seller-command" data-i18n="seller.command">npm run agentcart -- submit --title "Product title" --url "https://example.com/product" --curator your_handle --category "category" --best-for "who it helps" --not-for "who should skip" --note "why it is worth recommending"</code>
-              <p data-i18n="seller.commandHelp">Runs locally through the checked-in AgentCart CLI submit flow.</p>
-            </div>
+            <article class="persona-card persona-creator">
+              <p class="persona-tag" data-i18n="creator.tag">Creator</p>
+              <h3 data-i18n="creator.title">Taste, audience, and what not to recommend.</h3>
+              <p data-i18n="creator.body">Let the agent sound like you while staying honest about fit and sponsorship.</p>
+              <span data-i18n="creator.hint">Best when the agent needs a persona with boundaries.</span>
+            </article>
 
-            <div id="login" class="login-card">
-              <div>
-                <p data-i18n="login.prompt">Already have a persona?</p>
-                <code id="cli-login-command">npm run agentcart -- login</code>
-              </div>
-              <button type="button" id="copy-login" data-i18n="login.copy">Copy CLI login</button>
-            </div>
+            <article class="persona-card persona-merchant">
+              <p class="persona-tag" data-i18n="merchant.tag">Merchant</p>
+              <h3 data-i18n="merchant.title">Catalog context that turns into better matches.</h3>
+              <p data-i18n="merchant.body">Give the agent price, category, and product detail so it can recommend with confidence.</p>
+              <span data-i18n="merchant.hint">Best when the agent needs product structure, not fluff.</span>
+            </article>
           </div>
         </section>
 
-        <section id="skill" class="skill-grid">
-          <div class="skill-copy">
-            <p class="section-kicker" data-i18n="buyer.kicker">For buyers</p>
-            <h2 data-i18n="buyer.title">Let your agent read the context before it shops.</h2>
-            <p data-i18n="buyer.body">
-              AgentCart gives shopping agents a protocol: ask for context,
-              compare options, explain tradeoffs, disclose incentives, and wait
-              for approval before opening a purchase link.
+
+        <section id="reports" class="panel reports-panel">
+          <div class="panel-copy">
+            <p class="section-kicker" data-i18n="reports.kicker">For suppliers</p>
+            <h2 id="reports-title" data-i18n="reports.title">See what converts, not just what clicks.</h2>
+            <p data-i18n="reports.body">
+              Agents can return conversion, campaign lift, and next-action notes in one report.
             </p>
           </div>
 
-          <div class="terminal-card">
-            <div class="terminal-top">
-              <span></span>
-              <span></span>
-              <span></span>
-              <strong>skill.md</strong>
-            </div>
-            <pre><code id="skill-command" data-i18n="buyer.command">Run npm run agentcart -- install-skill --target codex
-then read .agentcart/skills/agentcart-codex.md and use AgentCart whenever I ask what to buy.</code></pre>
-            <button class="copy-button" id="copy-skill" type="button" data-i18n="buyer.copy">
-              Copy for my agent
-            </button>
+          <div class="persona-grid supplier-grid">
+            <article class="persona-card persona-brand">
+              <p class="persona-tag" data-i18n="reports.overview.tag">Overview</p>
+              <h3 data-i18n="reports.overview.title">Conversion at a glance.</h3>
+              <p data-i18n="reports.overview.body">Clicks, purchases, approval rate, and top referrers in one snapshot.</p>
+              <span data-i18n="reports.overview.hint">Daily pulse.</span>
+            </article>
+
+            <article class="persona-card persona-creator">
+              <p class="persona-tag" data-i18n="reports.campaign.tag">Campaign</p>
+              <h3 data-i18n="reports.campaign.title">Which message actually moved intent.</h3>
+              <p data-i18n="reports.campaign.body">Compare hooks, product cards, and creator prompts side by side.</p>
+              <span data-i18n="reports.campaign.hint">Campaign pulse.</span>
+            </article>
+
+            <article class="persona-card persona-merchant">
+              <p class="persona-tag" data-i18n="reports.summary.tag">Agent summary</p>
+              <h3 data-i18n="reports.summary.title">Next steps in plain language.</h3>
+              <p data-i18n="reports.summary.body">The agent explains what to keep, what to cut, and what to test next.</p>
+              <span data-i18n="reports.summary.hint">Ready for the next round.</span>
+            </article>
           </div>
         </section>
 
-        <section id="demo" class="demo-section" aria-labelledby="demo-title">
-          <div>
-            <p class="section-kicker" data-i18n="demo.kicker">Demo film</p>
-            <h2 id="demo-title" data-i18n="demo.title">Show the moment an agent shops with context.</h2>
+        <section id="demo" class="panel demo-panel" aria-labelledby="demo-title">
+          <div class="panel-copy">
+            <p class="section-kicker" data-i18n="demo.kicker">Show the moment it clicks</p>
+            <h2 id="demo-title" data-i18n="demo.title">The page should make people think, “oh, this belongs in an agent skill.”</h2>
             <p data-i18n="demo.body">
-              Watch the core loop: a buyer asks in chat, AgentCart returns three
-              disclosed recommendations with fit notes, and the agent waits for
-              approval before opening a purchase path.
+              Keep the proof tiny and legible: a short chat, a one-command path,
+              and the promise that the agent waits for approval before buying.
             </p>
           </div>
 
-          <div class="video-card" aria-label="AgentCart demo video placeholder">
-            <button type="button" aria-label="Play AgentCart demo preview">
-              <span></span>
-            </button>
-            <div>
-              <strong data-i18n="demo.cardLabel">40 sec demo</strong>
-              <p data-i18n="demo.cardBody">Buyer asks. Agent checks. Cart opens only when approved.</p>
+          <div class="demo-grid">
+            <div class="chat-card" aria-label="AgentCart agent chat demo">
+              <div class="chat-label" data-i18n="demo.chatLabel">Chat preview</div>
+              <p class="chat-line user" data-i18n="demo.chatUser">Recommend a leather wallet under 100,000 won with AgentCart.</p>
+              <p class="chat-line agent" data-i18n="demo.chatAgent">
+                First I will show the disclosure, then recommend only three
+                options that fit your context and budget.
+              </p>
             </div>
-          </div>
 
-          <div class="chat-demo" aria-label="AgentCart agent chat demo">
-            <p class="chat-line user" data-i18n="demo.chatUser">Recommend a leather wallet under 100,000 won with AgentCart.</p>
-            <p class="chat-line agent" data-i18n="demo.chatAgent">
-              First I will show the disclosure, then recommend only three options that fit your context and budget.
-            </p>
+            <div class="flow-card">
+              <div class="flow-card-top">
+                <span data-i18n="demo.commandLabel">Agent skill command</span>
+                <button class="copy-button" id="copy-demo" type="button" data-i18n="demo.copy">
+                  Copy for my agent
+                </button>
+              </div>
+              <code id="demo-command" data-i18n="demo.command">npm run agentcart -- submit --title "Product title" --url "https://example.com/product" --best-for "who it helps" --note "why it is worth recommending"</code>
+              <div class="flow-notes">
+                <span data-i18n="demo.flow1">disclose</span>
+                <span data-i18n="demo.flow2">compare</span>
+                <span data-i18n="demo.flow3">approve</span>
+              </div>
+            </div>
           </div>
         </section>
       </main>

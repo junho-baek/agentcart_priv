@@ -43,8 +43,8 @@ Business model:
 - Free consumer usage.
 - Free curator launch period, e.g. 1 persona and 50 links for the first 3 months.
 - Paid curator tiers for more links, multiple personas, campaign/event prompts, advanced analytics, team accounts, custom domains, and self-owned shop priority links.
-- Brand or merchant tiers for official brand personas, seasonal campaign personas, attribution, and performance reporting.
-- Retail partner tiers for self-owned shop integrations, product catalog sync, and conversion reporting.
+- Brand or merchant tiers for official brand personas, seasonal campaign personas, attribution, conversion reporting, and performance reporting.
+- Retail partner tiers for self-owned shop integrations, product catalog sync, and supplier-side campaign reporting.
 
 Brand personas must be explicit. If a persona represents a brand, store, or sponsored campaign, AgentCart should disclose that relationship, whether the persona prioritizes first-party products, and whether recommendations include or exclude competing products.
 
@@ -90,6 +90,18 @@ The core B2B sale is:
 AI-native campaign kit for commerce brands.
 Not a new ad format. A new campaign surface inside AI agents.
 ```
+
+## Supplier Reporting Loop
+
+AgentCart should not stop at helping a creator or brand publish context. The supply side also needs a clean feedback loop so merchants can see what the agents actually convert.
+
+The reporting layer should make it easy to read:
+
+- conversion, click-through, approval rate, and revenue lift
+- which campaign, prompt, or creator persona moved intent
+- a short agent summary of what to keep, cut, and test next
+
+That loop turns AgentCart from a one-way publishing tool into a two-sided commerce layer: creators and brands ship context, suppliers read outcomes, and the next campaign gets better.
 
 ## Beta Service Model
 

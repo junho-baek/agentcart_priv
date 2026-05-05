@@ -7,6 +7,7 @@ import { getCuratorPersona, getCuratorRoom } from "../registry/curator.js";
 import {
   buildAgentProductContext,
   buildRecommenderPersona,
+  normalizeHandle,
   validateProtocolObject,
 } from "../registry/protocol.js";
 import {
@@ -28,6 +29,7 @@ import {
   seedRegistry,
   upsertAccount,
 } from "../registry/store.js";
+import { slugify } from "../registry/schema.js";
 import { writeSkill } from "../registry/skill.js";
 
 const VALUE_FLAGS = new Set([
@@ -125,6 +127,7 @@ Usage:
   agentcart protocol:context <slug-or-id>
   agentcart protocol:persona <handle>
   agentcart protocol:validate <file>
+  agentcart register:template [--email creator@example.com] [--curator <handle>] [--display-name <name>] [--title <title>] [--url <url>] [--category <category>] [--best-for <text>] [--not-for <text>] [--note <text>] [--disclosure <text>] [--output <path>]
   agentcart install-skill --target generic|codex|claude|openclaw [--output <path>]
   agentcart open <slug-or-id> [--dry-run]
   agentcart login [--email creator@example.com]
@@ -447,6 +450,92 @@ async function runProtocolValidate(args, { stdout, stderr }) {
   return 0;
 }
 
+function normalizeTemplateSlug(value, fallback) {
+  return slugify(value) || slugify(fallback) || String(fallback ?? "").trim();
+}
+
+function buildRegistrationTemplate(args) {
+  const accountEmail = normalizeAccountEmail(flagValue(args, "--email") ?? "creator@example.com");
+  const curatorHandle = normalizeTemplateSlug(flagValue(args, "--curator") ?? "your-handle", "your-handle");
+  const displayName = flagValue(args, "--display-name") ?? "Your Name";
+  const title = flagValue(args, "--title") ?? "Product title";
+  const originalUrl = flagValue(args, "--url") ?? "https://example.com/product";
+  const category = flagValue(args, "--category") ?? "category";
+  const bestFor = flagValue(args, "--best-for") ?? "who it helps";
+  const notFor = flagValue(args, "--not-for") ?? "who should skip";
+  const note = flagValue(args, "--note") ?? "why it is worth recommending";
+  const disclosure =
+    flagValue(args, "--disclosure") ??
+    "추천에는 커미션 링크가 포함될 수 있으며 구매 시 수수료를 받을 수 있습니다.";
+  const campaignHandle = normalizeTemplateSlug(title || "campaign", "campaign");
+
+  return {
+    kind: "AgentCartRegistrationDraft",
+    accountEmail,
+    visibility: "curator_scoped",
+    publicationStatus: "draft",
+    personas: [
+      {
+        kind: "RecommenderPersona",
+        handle: curatorHandle,
+        displayName,
+        personaName: `${displayName} Curator`,
+        adviceMode: "insight_first",
+        commercialRole: "affiliate_publisher",
+        tagline: `${displayName}의 추천 도우미`,
+        greeting: `안녕하세요, ${displayName} 큐레이터입니다.`,
+        voiceTraits: ["concise", "practical", "disclosure_first"],
+        curationPrinciples: ["lead with fit", "disclose commission links", "avoid unsupported claims"],
+        defaultOneLiner: `${title}이 필요한 사람에게 추천합니다.`,
+        disclosurePolicy: {
+          requiredDisclosureText: disclosure,
+          firstPartyPriority: false,
+          competitorInclusionPolicy: "may_include",
+          sponsoredCampaign: false,
+          officialBrandPersona: false,
+        },
+      },
+    ],
+    entries: [
+      {
+        kind: "CurationEntry",
+        title,
+        originalUrl,
+        category,
+        curator: {
+          handle: curatorHandle,
+          displayName,
+        },
+        campaignHandle,
+        bestFor: [bestFor],
+        notFor: [notFor],
+        curationNote: note,
+        claimNotes: [note],
+        searchKeywords: [title, category, bestFor],
+        riskFlags: [],
+        disclosureHint: disclosure,
+      },
+    ],
+  };
+}
+
+async function runRegisterTemplate(args, { workDir, stdout }) {
+  const output = flagValue(args, "--output");
+  const template = buildRegistrationTemplate(args);
+  const rendered = `${JSON.stringify(template, null, 2)}\n`;
+
+  if (output) {
+    const outputPath = isAbsolute(output) ? output : join(workDir, output);
+    await writeFile(outputPath, rendered, "utf8");
+    stdout(`Wrote registration template: ${outputPath}`);
+    return 0;
+  }
+
+  stdout(rendered.trimEnd());
+
+  return 0;
+}
+
 async function runInstallSkill(args, { workDir, stdout }) {
   const target = flagValue(args, "--target") ?? "generic";
   const output = flagValue(args, "--output");
@@ -577,6 +666,10 @@ export async function run(args = [], options = {}) {
 
     if (command === "protocol:validate") {
       return await runProtocolValidate(commandArgs, { stdout, stderr });
+    }
+
+    if (command === "register:template") {
+      return await runRegisterTemplate(commandArgs, { workDir, stdout });
     }
 
     if (command === "install-skill") {

@@ -4,45 +4,40 @@ import test from "node:test";
 
 const countOccurrences = (content, needle) => content.split(needle).length - 1;
 
-test("landing page positions AgentCart as an installable agent-native context layer", async () => {
+test("landing page feels like an installable agent skill, not a dense explainer", async () => {
   const html = await readFile(new URL("../web/index.html", import.meta.url), "utf8");
 
-  assert.match(html, /agent-native commerce context layer/);
-  assert.match(html, /npm run agentcart -- install-skill/);
-  assert.match(html, /npm run agentcart -- login/);
-  assert.match(html, /\.agentcart\/skills\/agentcart-codex\.md/);
+  assert.match(html, /Give shopping links/);
+  assert.match(html, /a skill your agents can call\./);
+  assert.match(html, /npm run agentcart -- install-skill --target codex/);
+  assert.match(html, /Paste a product or affiliate link/);
+  assert.match(html, /Campaign rules \+ disclosure\./);
+  assert.match(html, /See what converts, not just what clicks\./);
+  assert.match(html, /The page should make people think, “oh, this belongs in an agent skill\.”/);
   assert.match(html, /npm run agentcart -- submit/);
-  assert.match(html, /id="install"/);
-  assert.match(html, /id="copy-install"/);
-  assert.match(html, /Recommend a leather wallet under 100,000 won with AgentCart\./);
-  assert.match(
-    html,
-    /First I will show the disclosure, then recommend only three options that fit your context and budget\./
-  );
-  assert.doesNotMatch(html, /This should become/);
-  assert.doesNotMatch(html, /npx agentcart/);
-  assert.doesNotMatch(html, /agentcart\.dev\/skill\.md/);
-  assert.doesNotMatch(html, /seller-skill\.md/);
+  assert.doesNotMatch(html, /Copy CLI login/);
+  assert.doesNotMatch(html, /Already have a persona\?/);
+  assert.doesNotMatch(html, /OpenClaw/);
 });
 
-test("landing translations keep required keys aligned across four languages", async () => {
+test("landing translations keep the key sections aligned across four languages", async () => {
   const main = await readFile(new URL("../web/main.js", import.meta.url), "utf8");
   const keys = [
     "hero.kicker",
     "hero.title1",
     "hero.title2",
-    "hero.subtitle",
     "install.title",
-    "install.command",
-    "demo.chatUser",
-    "demo.chatAgent",
+    "try.inputLabel",
+    "brand.title",
+    "creator.title",
+    "merchant.title",
+    "demo.title",
   ];
 
   for (const key of keys) {
     assert.equal(countOccurrences(main, key), 4, `${key} should appear once per language`);
   }
 
-  assert.doesNotMatch(main, /npx agentcart/);
-  assert.doesNotMatch(main, /agentcart\.dev\/skill\.md/);
-  assert.doesNotMatch(main, /seller-skill\.md/);
+  assert.doesNotMatch(main, /Copy CLI login/);
+  assert.doesNotMatch(main, /OpenClaw/);
 });

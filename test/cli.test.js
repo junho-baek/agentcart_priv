@@ -41,6 +41,10 @@ test("help lists registry commands and preserved auth commands", async () => {
     assert.match(output, /search/);
     assert.match(output, /submit/);
     assert.match(output, /register:draft/);
+    assert.match(output, /register:template/);
+    assert.match(output, /--curator/);
+    assert.match(output, /--output/);
+    assert.match(output, /--disclosure/);
     assert.match(output, /curator:room/);
     assert.match(output, /install-skill/);
     assert.match(output, /open/);
@@ -361,6 +365,103 @@ test("install-skill writes target skill and prints the path", async () => {
     assert.equal(outputPath, join(workDir, ".agentcart", "skills", "agentcart-codex.md"));
     assert.match(content, /name: agentcart-shopping/);
     assert.match(content, /Never auto-open a monetized purchase link\./);
+  });
+});
+
+test("register template prints a rich starter draft to stdout", async () => {
+  await withCli(async ({ runCli, stdout }) => {
+    const code = await runCli([
+      "register:template",
+      "--email",
+      "Creator@Example.COM",
+      "--curator",
+      "Brand Launch",
+      "--display-name",
+      "Brand Launch",
+      "--title",
+      "Starter Product",
+      "--url",
+      "https://brand.example/product",
+      "--category",
+      "Home",
+      "--best-for",
+      "busy creators",
+      "--not-for",
+      "people who need overnight shipping",
+      "--note",
+      "plain English note",
+      "--disclosure",
+      "short disclosure",
+    ]);
+    const template = JSON.parse(stdout[0]);
+
+    assert.equal(code, 0);
+    assert.equal(template.accountEmail, "creator@example.com");
+    assert.equal(template.personas[0].handle, "brand-launch");
+    assert.equal(template.personas[0].tagline, "Brand Launch의 추천 도우미");
+    assert.equal(template.personas[0].voiceTraits.join(","), "concise,practical,disclosure_first");
+    assert.equal(template.entries[0].campaignHandle, "starter-product");
+    assert.deepEqual(template.entries[0].searchKeywords, ["Starter Product", "Home", "busy creators"]);
+    assert.deepEqual(template.entries[0].claimNotes, ["plain English note"]);
+    assert.deepEqual(template.entries[0].riskFlags, []);
+    assert.match(stdout.join("\n"), /"kind": "AgentCartRegistrationDraft"/);
+  });
+});
+
+test("register template preserves non-ASCII curator handles and titles", async () => {
+  await withCli(async ({ runCli, stdout }) => {
+    const code = await runCli([
+      "register:template",
+      "--curator",
+      "브랜드 런치",
+      "--title",
+      "한글 제품",
+    ]);
+    const template = JSON.parse(stdout[0]);
+
+    assert.equal(code, 0);
+    assert.equal(template.personas[0].handle, "브랜드-런치");
+    assert.equal(template.entries[0].campaignHandle, "한글-제품");
+  });
+});
+
+test("register template creates a starter draft that can be registered", async () => {
+  await withCli(async ({ runCli, stdout, workDir }) => {
+    const templatePath = join(workDir, "registration-template.json");
+    const code = await runCli([
+      "register:template",
+      "--email",
+      "Creator@Example.COM",
+      "--curator",
+      "Brand-Launch",
+      "--display-name",
+      "Brand Launch",
+      "--title",
+      "Starter Product",
+      "--url",
+      "https://brand.example/product",
+      "--output",
+      "./registration-template.json",
+    ]);
+    const template = JSON.parse(await readFile(templatePath, "utf8"));
+    const registerCode = await runCli(["register:draft", templatePath]);
+    const registry = await loadRegistry(registryPathFor(workDir));
+    const card = registry.cards.find((candidate) => candidate.title === "Starter Product");
+    const persona = registry.curatorPersonas.find((candidate) => candidate.handle === "brand-launch");
+
+    assert.equal(code, 0);
+    assert.equal(registerCode, 0);
+    assert.equal(stdout[0], `Wrote registration template: ${templatePath}`);
+    assert.equal(template.accountEmail, "creator@example.com");
+    assert.equal(template.visibility, "curator_scoped");
+    assert.equal(template.publicationStatus, "draft");
+    assert.equal(template.personas[0].handle, "brand-launch");
+    assert.equal(template.personas[0].personaName, "Brand Launch Curator");
+    assert.equal(template.entries[0].curator.handle, "brand-launch");
+    assert.equal(card.slug, "starter-product");
+    assert.equal(persona.displayName, "Brand Launch");
+    assert.equal(registry.cards.length, 1);
+    assert.equal(registry.curatorPersonas.length, 1);
   });
 });
 
