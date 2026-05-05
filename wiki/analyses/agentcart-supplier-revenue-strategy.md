@@ -268,6 +268,10 @@ For catalog owners:
 - agent-readable product context
 - reporting and exports
 
+## Surface Alignment
+
+The public landing page should mirror this packaging ladder so the revenue story is obvious at a glance: free creator entry, brand campaign controls, and merchant feed sync/reporting.
+
 ## KPI Model
 
 Track the supply side by these metrics:

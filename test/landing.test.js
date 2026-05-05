@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const countOccurrences = (content, needle) => content.split(needle).length - 1;
+const countOccurrences = (content, needle) =>
+  (content.match(new RegExp(`"${needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`, "g")) || []).length;
 
 test("landing page feels like an installable agent skill, not a dense explainer", async () => {
   const html = await readFile(new URL("../web/index.html", import.meta.url), "utf8");
@@ -13,6 +14,9 @@ test("landing page feels like an installable agent skill, not a dense explainer"
   assert.match(html, /Paste a product or affiliate link/);
   assert.match(html, /Campaign rules \+ disclosure\./);
   assert.match(html, /See what converts, not just what clicks\./);
+  assert.match(html, /Start free, then move the right supply into paid workflows\./);
+  assert.match(html, /Brand Campaign Kit/);
+  assert.match(html, /Merchant Feed Sync/);
   assert.match(html, /The page should make people think, “oh, this belongs in an agent skill\.”/);
   assert.match(html, /npm run agentcart -- submit/);
   assert.doesNotMatch(html, /Copy CLI login/);
@@ -31,6 +35,11 @@ test("landing translations keep the key sections aligned across four languages",
     "brand.title",
     "creator.title",
     "merchant.title",
+    "reports.title",
+    "packages.title",
+    "packages.creator.title",
+    "packages.brand.title",
+    "packages.merchant.title",
     "demo.title",
   ];
 

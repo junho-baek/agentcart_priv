@@ -33,3 +33,8 @@ Append-only record of ingest, query, lint, and maintenance activity.
 
 - Added operational notes for mapping AgentCart skills into Codex, Hermes Agent, and GStack workflows.
 - Clarified that `~/.codex/skills` and `~/.hermes/skills` are runtime-specific mirrors while repository `skills/` remains canonical.
+
+## [2026-05-06] maintenance | landing page revenue ladder alignment
+
+- Updated the public landing page to frame AgentCart as an installable agent skill and surface the Creator Pro, Brand Campaign Kit, and Merchant Feed Sync offer ladder.
+- Added test coverage so the hero, install prompt, and package section stay aligned across translations.
